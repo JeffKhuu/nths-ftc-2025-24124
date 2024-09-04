@@ -20,43 +20,44 @@ public class Main extends OpMode {
     // TODO: Take control hub, battery, etc home?
     // TODO: GlobalCoordinateSystem? (See video)
 
-    GamepadEx driver = new GamepadEx(gamepad1); //Assigns gamepad1 as the driver gamepad
-    GamepadEx controller = new GamepadEx(gamepad2); //Assigns gamepad2 as the hardware gamepad
+    //GamepadEx driver = new GamepadEx(gamepad1); //Assigns gamepad1 as the driver gamepad
+    //GamepadEx controller = new GamepadEx(gamepad2); //Assigns gamepad2 as the hardware gamepad
 
     DriveTrain driveTrain = new DriveTrain(hardwareMap);
-    Slide slides = new Slide();
 
-    private final CarouselSelect<Double> speedSelect = new CarouselSelect<>(
-            new Double[]{1.0, 0.5, 0.25} // Speed multipliers
-    );
+
+//    private final CarouselSelect<Double> speedSelect = new CarouselSelect<>(
+//            new Double[]{1.0, 0.5, 0.25} // Speed multipliers
+//    );
 
     @Override
     public void init() {
         // Register gamepad inputs
-        driver.getGamepadButton(GamepadKeys.Button.A) //Gamepad input test
-                .whenPressed(new InstantCommand(() -> telemetry.addData("Command Based", "A button is pressed")))
-                .whenHeld(new InstantCommand(() -> telemetry.addData("Command Based", "A button is being held")));
+//        driver.getGamepadButton(GamepadKeys.Button.A) //Gamepad input test
+//                .whenPressed(new InstantCommand(() -> telemetry.addData("Command Based", "A button is pressed")))
+//                .whenHeld(new InstantCommand(() -> telemetry.addData("Command Based", "A button is being held")));
+//
+//        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
+//                new InstantCommand(() -> speedSelect.moveSelection(-1)));
+//
+//        driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
+//                new InstantCommand(speedSelect::moveSelection));
 
-        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
-                new InstantCommand(() -> speedSelect.moveSelection(-1)));
-
-        driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
-                new InstantCommand(speedSelect::moveSelection));
-
+        driveTrain.init();
         telemetry.addData("Status", "Initialized");
 
     }
 
     @Override
     public void loop() {
-        double x = driver.getLeftX();
-        double y = driver.getLeftY(); // Values: -1 (Pull up) to 1 (Pull down)
-        double turn = driver.getRightX();
-        driveTrain.move(x, y, turn, speedSelect.getSelected());
+        double x = gamepad1.left_stick_x;
+        double y = -gamepad1.left_stick_y; // Values: -1 (Pull up) to 1 (Pull down)
+        double turn = gamepad1.right_stick_x;
+        driveTrain.move(x, y, turn, 1);
 
-        CommandScheduler.getInstance().run();
+        //CommandScheduler.getInstance().run();
 
-        telemetry.addData("Speed", speedSelect.getSelected());
+        telemetry.addData("Speed", 1);
         telemetry.addData("Status", "Runtime: " + getRuntime());
     }
 
