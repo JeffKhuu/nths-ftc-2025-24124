@@ -145,6 +145,7 @@ public final class MecanumDrive {
             imu = lazyImu.get();
 
             // TODO: reverse encoders if needed
+            //  leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         }
 

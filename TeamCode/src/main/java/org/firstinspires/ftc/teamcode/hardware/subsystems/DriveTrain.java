@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.utilities.System;
 
 /**
- * Subsystem class which implements a simple mecanum drive train, IMU readings and odometry
- * to assist in robot movement and driving.
+ * Subsystem class which implements a simple mecanum drive train.
  */
 public class DriveTrain {
     private static final double MM_PER_INCH = 25.4;
@@ -17,28 +16,16 @@ public class DriveTrain {
     public static double WHEEL_RADIUS = 100 / MM_PER_INCH; // Value originally in mm, converted to in
     public static double GEAR_RATIO = 1;
 
-    private DcMotor leftMotor, rightMotor, leftRearMotor, rightRearMotor;
-    private HardwareMap hardwareMap;
+    private final DcMotor leftMotor, rightMotor, leftRearMotor, rightRearMotor;
 
     public DriveTrain(HardwareMap hardwareMap) {
-        this.hardwareMap = hardwareMap;
-    }
-
-    public void init() {
-        //leftMotor = hardwareMap.get(DcMotor.class, "leftFront");
         leftMotor = hardwareMap.dcMotor.get("leftFront");
         rightMotor = hardwareMap.dcMotor.get("rightFront");
         leftRearMotor = hardwareMap.dcMotor.get("leftRear");
         rightRearMotor = hardwareMap.dcMotor.get("rightRear");
-//        rightMotor = hardwareMap.get(DcMotor.class, "rightFront");
-//        leftRearMotor = hardwareMap.get(DcMotor.class, "leftRear");
-//        rightRearMotor = hardwareMap.get(DcMotor.class, "rightRear");
 
-        /* Set the directions of each motor so they spin in a consistent manner */
         leftMotor.setDirection(DcMotor.Direction.REVERSE);
         leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightRearMotor.setDirection(DcMotor.Direction.FORWARD);
     }
 
 
