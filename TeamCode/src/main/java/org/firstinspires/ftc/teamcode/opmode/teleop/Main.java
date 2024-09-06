@@ -51,16 +51,26 @@ public class Main extends OpMode {
 
     @Override
     public void loop() {
-        double x = gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y; // Values: -1 (Pull up) to 1 (Pull down)
-        double turn = gamepad1.right_stick_x;
-        driveTrain.move(x, y, turn, 1);
+        double x = driver.getLeftX();
+        double y = driver.getLeftY(); // Values: -1 (Pull up) to 1 (Pull down)
+        double turn = driver.getRightX();
+        driveTrain.move(x, y, turn, speedSelect.getSelected());
 
-        CommandScheduler.getInstance().run();
-
-        if(gamepad1.x){
+        if(gamepad1.dpad_left){
             driveTrain.setDrivePower(DriveTrain.LEFT);
         }
+        if(gamepad1.dpad_up){
+            driveTrain.setDrivePower(DriveTrain.FORWARD);
+        }
+        if(gamepad1.dpad_right){
+            driveTrain.setDrivePower(DriveTrain.RIGHT);
+        }
+        if(gamepad1.dpad_down){
+            driveTrain.setDrivePower(DriveTrain.BACKWARD);
+        }
+
+
+        CommandScheduler.getInstance().run();
 
         telemetry.addData("Speed", speedSelect.getSelected());
         telemetry.addData("Status", "Runtime: " + getRuntime());

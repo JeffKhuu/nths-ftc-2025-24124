@@ -57,7 +57,8 @@ public class CarouselSelect<T> {
      * @return Returns the CarouselSelect object. Useful for chaining methods.
      */
     public CarouselSelect<T> moveSelection(int amount) {
-        currentIndex = (currentIndex + amount) % options.length;
+        currentIndex = currentIndex + amount >= 0 ? (currentIndex + amount) % options.length
+                : (options.length + (amount % options.length));
         return this;
     }
 
