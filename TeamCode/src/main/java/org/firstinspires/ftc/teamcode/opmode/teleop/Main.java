@@ -9,9 +9,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
+import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
 
 @TeleOp(name = "Main TeleOp", group = "ඞ")
 public class Main extends OpMode {
@@ -20,7 +22,7 @@ public class Main extends OpMode {
     // TODO: Optimal way to tune Road Runner?
     // TODO: Take control hub, battery, etc home?
 
-    GamepadEx driver; //Assigns gamepad1 as the driver gamepad
+    ControllerEx driver; //Assigns gamepad1 as the driver gamepad
     //GamepadEx controller = new GamepadEx(gamepad2); //Assigns gamepad2 as the hardware gamepad
 
     DriveTrain driveTrain;
@@ -32,9 +34,9 @@ public class Main extends OpMode {
     @Override
     public void init() {
         // Register gamepad inputs
-        driver = new GamepadEx(gamepad1);
+        driver = new ControllerEx(gamepad1);
         driveTrain = new DriveTrain(hardwareMap);
-
+        AngularVelocity a = new AngularVelocity();
         driver.getGamepadButton(GamepadKeys.Button.A) //Gamepad input test
                 .whenPressed(new InstantCommand(() -> telemetry.addData("Command Based", "A button is pressed")))
                 .whenHeld(new InstantCommand(() -> telemetry.addData("Command Based", "A button is being held")));
@@ -44,6 +46,12 @@ public class Main extends OpMode {
 
         driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
                 new InstantCommand(speedSelect::moveSelection));
+
+
+        driver.registerDPad(
+                /*Up*/ new InstantCommand(() -> driveTrain.setDrivePower(DriveTrain.FORWARD)),
+                /*Down*/ new InstantCommand(() -> driveTrain.setDrivePower(DriveTrain.BACKWARD))
+        );
 
         telemetry.addData("Status", "Initialized");
 
@@ -59,14 +67,8 @@ public class Main extends OpMode {
         if(gamepad1.dpad_left){
             driveTrain.setDrivePower(DriveTrain.LEFT);
         }
-        if(gamepad1.dpad_up){
-            driveTrain.setDrivePower(DriveTrain.FORWARD);
-        }
         if(gamepad1.dpad_right){
             driveTrain.setDrivePower(DriveTrain.RIGHT);
-        }
-        if(gamepad1.dpad_down){
-            driveTrain.setDrivePower(DriveTrain.BACKWARD);
         }
 
 
