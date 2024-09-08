@@ -36,7 +36,7 @@ public class Main extends OpMode {
         // Register gamepad inputs
         driver = new ControllerEx(gamepad1);
         driveTrain = new DriveTrain(hardwareMap);
-        AngularVelocity a = new AngularVelocity();
+
         driver.getGamepadButton(GamepadKeys.Button.A) //Gamepad input test
                 .whenPressed(new InstantCommand(() -> telemetry.addData("Command Based", "A button is pressed")))
                 .whenHeld(new InstantCommand(() -> telemetry.addData("Command Based", "A button is being held")));
