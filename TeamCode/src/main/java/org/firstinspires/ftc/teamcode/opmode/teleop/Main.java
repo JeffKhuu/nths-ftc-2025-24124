@@ -2,17 +2,12 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.button.GamepadButton;
-import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
-import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainFieldCentric;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
 
 @TeleOp(name = "Main TeleOp", group = "ඞ")
@@ -25,57 +20,40 @@ public class Main extends OpMode {
     ControllerEx driver; //Assigns gamepad1 as the driver gamepad
     //GamepadEx controller = new GamepadEx(gamepad2); //Assigns gamepad2 as the hardware gamepad
 
-    DriveTrain driveTrain;
-
-    private final CarouselSelect<Double> speedSelect = new CarouselSelect<>(
-            new Double[]{1.0, 0.5, 0.25} // Speed multipliers
-    );
+    DriveTrainFieldCentric driveTrain;
 
     @Override
     public void init() {
         // Register gamepad inputs
-        driver = new ControllerEx(gamepad1);
-        driveTrain = new DriveTrain(hardwareMap);
+        driveTrain = new DriveTrainFieldCentric(hardwareMap);
 
-        driver.getGamepadButton(GamepadKeys.Button.A) //Gamepad input test
-                .whenPressed(new InstantCommand(() -> telemetry.addData("Command Based", "A button is pressed")))
-                .whenHeld(new InstantCommand(() -> telemetry.addData("Command Based", "A button is being held")));
+        //driver = new ControllerEx(gamepad1); // Create Gamepad and Register Button Inputs
 
-        driver.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
-                new InstantCommand(() -> speedSelect.moveSelection(-1)));
+        driver = ControllerEx.Builder(gamepad1)
+                .bind(GamepadKeys.Button.A, new InstantCommand(() -> telemetry.addData("Command Based", "A button is pressed")))
 
-        driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
-                new InstantCommand(speedSelect::moveSelection));
+                .bind(GamepadKeys.Button.LEFT_BUMPER, new InstantCommand(() -> driveTrain.speeds.moveSelection(-1)))
+                .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::moveSelection))
 
+                .bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
+                .build();
 
-        driver.registerDPad(
-                /*Up*/ new InstantCommand(() -> driveTrain.setDrivePower(DriveTrain.FORWARD)),
-                /*Down*/ new InstantCommand(() -> driveTrain.setDrivePower(DriveTrain.BACKWARD))
-        );
 
         telemetry.addData("Status", "Initialized");
-
     }
 
     @Override
     public void loop() {
+        CommandScheduler.getInstance().run();
+
         double x = driver.getLeftX();
         double y = driver.getLeftY(); // Values: -1 (Pull up) to 1 (Pull down)
         double turn = driver.getRightX();
-        driveTrain.move(x, y, turn, speedSelect.getSelected());
+        driveTrain.move(x, y, turn);
 
-        if(gamepad1.dpad_left){
-            driveTrain.setDrivePower(DriveTrain.LEFT);
-        }
-        if(gamepad1.dpad_right){
-            driveTrain.setDrivePower(DriveTrain.RIGHT);
-        }
-
-
-        CommandScheduler.getInstance().run();
-
-        telemetry.addData("Speed", speedSelect.getSelected());
+        telemetry.addData("Speed", driveTrain.speeds.getSelected());
         telemetry.addData("Status", "Runtime: " + getRuntime());
+        telemetry.addData("Heading", driveTrain.getBotHeading());
     }
 
 

@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.utilities.System;
-
 /**
+ * DEPRECATED DRIVE TRAIN
  * Subsystem class which implements a simple mecanum drive train.
  */
 public class DriveTrain {
