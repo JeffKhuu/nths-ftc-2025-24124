@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
+import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,8 +10,11 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
+import org.firstinspires.ftc.teamcode.utilities.System;
+import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
+import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
-public class DriveTrainFieldCentric extends SubsystemBase {
+public class DriveTrainFieldCentric extends SubsystemBase implements TelemetrySubject {
 
     private final DcMotor leftMotor, rightMotor, leftRearMotor, rightRearMotor;
     private final IMU imu;
@@ -29,8 +34,8 @@ public class DriveTrainFieldCentric extends SubsystemBase {
 
         IMU.Parameters parameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+                        RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD,
+                        RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
 
         imu.initialize(parameters);
 
@@ -98,7 +103,9 @@ public class DriveTrainFieldCentric extends SubsystemBase {
         imu.resetYaw();
     }
 
-    public double getBotHeading() {
-        return botHeading;
+    @Override
+    public void updateTelemetry(TelemetryEx telemetry) {
+        telemetry.print("Speed", speeds.getSelected());
+        telemetry.print("Heading", botHeading);
     }
 }

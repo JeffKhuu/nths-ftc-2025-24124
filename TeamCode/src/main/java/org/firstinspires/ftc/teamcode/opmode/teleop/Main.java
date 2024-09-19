@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainFieldCentric;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
+import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
+import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryMaster;
 
 @TeleOp(name = "Main TeleOp", group = "ඞ")
 public class Main extends OpMode {
@@ -17,18 +19,18 @@ public class Main extends OpMode {
     // TODO: Optimal way to tune Road Runner?
     // TODO: Take control hub, battery, etc home?
 
-    ControllerEx driver; //Assigns gamepad1 as the driver gamepad
-    //GamepadEx controller = new GamepadEx(gamepad2); //Assigns gamepad2 as the hardware gamepad
+    private ControllerEx driver;
 
-    DriveTrainFieldCentric driveTrain;
+    private DriveTrainFieldCentric driveTrain;
+    private TelemetryEx telemetryEx;
+    private TelemetryMaster telemetryMaster;
 
     @Override
     public void init() {
-        // Register gamepad inputs
+        // Instantiate teleOp Systems
         driveTrain = new DriveTrainFieldCentric(hardwareMap);
 
-        //driver = new ControllerEx(gamepad1); // Create Gamepad and Register Button Inputs
-
+        // Register gamepad inputs
         driver = ControllerEx.Builder(gamepad1)
                 .bind(GamepadKeys.Button.A, new InstantCommand(() -> telemetry.addData("Command Based", "A button is pressed")))
 
@@ -38,6 +40,10 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
                 .build();
 
+        // Setup extended telemetry
+        telemetryEx = new TelemetryEx(telemetry);
+        telemetryMaster = new TelemetryMaster(telemetryEx)
+                .subscribe(driveTrain);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -45,15 +51,14 @@ public class Main extends OpMode {
     @Override
     public void loop() {
         CommandScheduler.getInstance().run();
+        telemetryMaster.update(); //Updates telemetry for all subscribed systems
 
         double x = driver.getLeftX();
         double y = driver.getLeftY(); // Values: -1 (Pull up) to 1 (Pull down)
         double turn = driver.getRightX();
         driveTrain.move(x, y, turn);
 
-        telemetry.addData("Speed", driveTrain.speeds.getSelected());
-        telemetry.addData("Status", "Runtime: " + getRuntime());
-        telemetry.addData("Heading", driveTrain.getBotHeading());
+        telemetryEx.print("Status", "Runtime: " + getRuntime());
     }
 
 
