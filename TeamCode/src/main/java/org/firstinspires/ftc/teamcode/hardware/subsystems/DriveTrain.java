@@ -1,103 +1,69 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
+import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
+import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
+
 /**
- * DEPRECATED DRIVE TRAIN
- * Subsystem class which implements a simple mecanum drive train.
+ * Field-Centric Mecanum Drive Train using RoadRunner MecanumDrive class
  */
-public class DriveTrain {
-    private static final double MM_PER_INCH = 25.4;
+public class DriveTrain extends SubsystemBase implements TelemetrySubject {
+    public final MecanumDrive mecanumDrive; // Roadrunner-Based mecanum drive
+    public final CarouselSelect<Double> speeds = new CarouselSelect<>(
+            new Double[]{1.0, 0.5, 0.25} // Speed multipliers
+    );
 
-    public static double TICKS_PER_REV = 8192;
-    public static double WHEEL_RADIUS = 100 / MM_PER_INCH; // Value originally in mm, converted to in
-    public static double GEAR_RATIO = 1;
+    private double botHeading; // Angle in radians the robot is facing
 
-    private final DcMotor leftMotor, rightMotor, leftRearMotor, rightRearMotor;
-
-    public DriveTrain(HardwareMap hardwareMap) {
-        leftMotor = hardwareMap.dcMotor.get("leftFront");
-        rightMotor = hardwareMap.dcMotor.get("rightFront");
-        leftRearMotor = hardwareMap.dcMotor.get("leftRear");
-        rightRearMotor = hardwareMap.dcMotor.get("rightRear");
-
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftRearMotor.setDirection(DcMotor.Direction.REVERSE);
+    public DriveTrain(HardwareMap hardwareMap, Pose2d pose2d) {
+        mecanumDrive = new MecanumDrive(hardwareMap, pose2d);
+        botHeading = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
-
-    public static final double FORWARD_SPEED = 0.6; // Forward speed constant
-    public static final double TURN_SPEED = 0.5;   // Turn speed constant
-
-    // The constant variable storing an array with the four motor powers to move the robot forwards.
-    public static final double[] FORWARD = {FORWARD_SPEED, FORWARD_SPEED, FORWARD_SPEED, FORWARD_SPEED};
-
-    // The constant variable storing an array with the four motor powers to move the robot backwards.
-    public static final double[] BACKWARD = {-FORWARD_SPEED, -FORWARD_SPEED, -FORWARD_SPEED, -FORWARD_SPEED};
-
-    // The constant variable storing an array with the four motor powers to move the robot left.
-    public static final double[] LEFT = {-FORWARD_SPEED, FORWARD_SPEED, FORWARD_SPEED, -FORWARD_SPEED};
-
-    // The constant variable storing an array with the four motor powers to move the robot right.
-    public static final double[] RIGHT = {FORWARD_SPEED, -FORWARD_SPEED, -FORWARD_SPEED, FORWARD_SPEED};
-
-    // The constant variable storing an array with the four motor powers to spin the robot clockwise.
-    public static final double[] SPIN_CW = {TURN_SPEED, -TURN_SPEED, TURN_SPEED, -TURN_SPEED};
-
-    // The constant variable storing an array with the four motor powers to spin the robot counter-clockwise.
-    public static final double[] SPIN_CCW = {-TURN_SPEED, TURN_SPEED, -TURN_SPEED, TURN_SPEED};
-
-
-    /**
-     * The method used to move the drive train given three inputs, most likely from a gamepad.
-     *
-     * @param x     A Value to dictate the "X" direction of the drive train (+value = forward)
-     * @param y     A value to dictate the "Y" direction of the drive train (+value = forward)
-     * @param turn  A Value to dictate the rotation of the drive train (+value = clockwise)
-     * @param speed Multiplier applied to all calculated power to scale the final power
-     */
-    public void move(double x, double y, double turn, double speed) {
-        //x: left-stick-x
-        //y: left-stick-y
-        //Turn: right-stick-x
-
-        double leftPower = y + x + turn;
-        double leftBackPower = y - x + turn;
-        double rightPower = y - x - turn;
-        double rightBackPower = y + x - turn;
-
-        double maxPower = Math.max(Math.max(Math.abs(leftPower), Math.abs(leftBackPower)),
-                Math.max(Math.abs(rightPower), Math.abs(rightBackPower)));
-
-        if (maxPower > 1.0) {
-            leftPower /= maxPower;
-            leftBackPower /= maxPower;
-            rightPower /= maxPower;
-            rightBackPower /= maxPower;
-        }
-        setDrivePower(leftPower * speed,
-                rightPower * speed,
-                leftBackPower * speed,
-                rightBackPower * speed);
-
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+        botHeading = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);// Update Bot Heading
+        mecanumDrive.updatePoseEstimate();
     }
 
+    public void move(double x, double y, double turn) {
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading); // Field Centric Drive Train
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+        rotX *= 1.1; // Counteract imperfect strafing
+
+        double normalize = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(turn), 1);
+        double leftPower = (rotY + rotX + turn) / normalize;
+        double leftBackPower = (rotY - rotX + turn) / normalize;
+        double rightPower = (rotY - rotX - turn) / normalize;
+        double rightBackPower = (rotY + rotX - turn) / normalize;
+
+        setDrivePower(leftPower * speeds.getSelected(),
+                leftBackPower * speeds.getSelected(),
+                rightPower * speeds.getSelected(),
+                rightBackPower * speeds.getSelected());
+    }
 
     /**
      * The method used to move the drive train given four powers for each of the motors.
      *
      * @param leftPower      The power to be given to the front-left motor.
-     * @param rightPower     The power to be given to the front-right motor.
      * @param leftRearPower  The power to be given to the back-left motor.
+     * @param rightPower     The power to be given to the front-right motor.
      * @param rightRearPower The power to be given to the back-right motor.
      * @see <a href="https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html">Mecanum Wheel Guide</a>
      */
-    public void setDrivePower(double leftPower, double rightPower, double leftRearPower, double rightRearPower) {
-        leftMotor.setPower(leftPower);
-        leftRearMotor.setPower(leftRearPower);
-        rightMotor.setPower(rightPower);
-        rightRearMotor.setPower(rightRearPower);
+    public void setDrivePower(double leftPower, double leftRearPower, double rightPower, double rightRearPower) {
+        mecanumDrive.leftFront.setPower(leftPower);
+        mecanumDrive.leftBack.setPower(leftRearPower);
+        mecanumDrive.rightFront.setPower(rightPower);
+        mecanumDrive.rightBack.setPower(rightRearPower);
     }
 
     /**
@@ -105,14 +71,23 @@ public class DriveTrain {
      *
      * @param powers An array of doubles containing four powers to set each motor.
      *               The order in which power is given to the motors is as follows:
-     *               Front Left, Front Right, Back Left, Back Right
+     *               Front Left, Back Left, Front Right, Back Right
      * @see <a href="https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html">Mecanum Wheel Guide</a>
      */
     public void setDrivePower(double[] powers) {
-        leftMotor.setPower(powers[0]);
-        rightMotor.setPower(powers[1]);
-        leftRearMotor.setPower(powers[2]);
-        rightRearMotor.setPower(powers[3]);
+        mecanumDrive.leftFront.setPower(powers[0]);
+        mecanumDrive.leftBack.setPower(powers[1]);
+        mecanumDrive.rightFront.setPower(powers[2]);
+        mecanumDrive.rightBack.setPower(powers[3]);
     }
 
+    public void resetHeading() {
+        mecanumDrive.lazyImu.get().resetYaw();
+    }
+
+    @Override
+    public void updateTelemetry(TelemetryEx telemetry) {
+        telemetry.print("Speed", speeds.getSelected());
+        telemetry.print("Heading", botHeading);
+    }
 }

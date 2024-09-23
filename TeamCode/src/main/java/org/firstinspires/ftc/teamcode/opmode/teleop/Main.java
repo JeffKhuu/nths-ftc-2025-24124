@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrainFieldCentric;
+import org.firstinspires.ftc.teamcode.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryMaster;
@@ -16,24 +17,19 @@ import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryMaster;
 public class Main extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
-    // TODO: Optimal way to tune Road Runner?
-    // TODO: Take control hub, battery, etc home?
-
     private ControllerEx driver;
 
-    private DriveTrainFieldCentric driveTrain;
+    private DriveTrain driveTrain;
     private TelemetryEx telemetryEx;
     private TelemetryMaster telemetryMaster;
 
     @Override
     public void init() {
         // Instantiate teleOp Systems
-        driveTrain = new DriveTrainFieldCentric(hardwareMap);
+        driveTrain = new DriveTrain(hardwareMap, FieldConstants.getLastSavedPose());
 
         // Register gamepad inputs
         driver = ControllerEx.Builder(gamepad1)
-                .bind(GamepadKeys.Button.A, new InstantCommand(() -> telemetry.addData("Command Based", "A button is pressed")))
-
                 .bind(GamepadKeys.Button.LEFT_BUMPER, new InstantCommand(() -> driveTrain.speeds.moveSelection(-1)))
                 .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::moveSelection))
 

@@ -61,6 +61,8 @@ import java.util.List;
 
 @Config
 public final class MecanumDrive {
+
+    //region Params Class
     public static class Params {
         // IMU orientation
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
@@ -96,7 +98,9 @@ public final class MecanumDrive {
         public double lateralVelGain = 0.0;
         public double headingVelGain = 0.0; // shared with turn
     }
+    //endregion
 
+    // Public Variables
     public static Params PARAMS = new Params();
 
     public final MecanumKinematics kinematics = new MecanumKinematics(
@@ -113,9 +117,7 @@ public final class MecanumDrive {
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
 
     public final DcMotorEx leftFront, leftBack, rightBack, rightFront;
-
     public final VoltageSensor voltageSensor;
-
     public final LazyImu lazyImu;
 
     public final Localizer localizer;
@@ -128,6 +130,7 @@ public final class MecanumDrive {
     private final DownsampledWriter driveCommandWriter = new DownsampledWriter("DRIVE_COMMAND", 50_000_000);
     private final DownsampledWriter mecanumCommandWriter = new DownsampledWriter("MECANUM_COMMAND", 50_000_000);
 
+    //region Drive Localizer (No Dead Wheels)
     // Localizer using motor encoders
     public class DriveLocalizer implements Localizer {
         public final Encoder leftFront, leftBack, rightBack, rightFront;
@@ -213,6 +216,7 @@ public final class MecanumDrive {
             );
         }
     }
+    //endregion
 
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         this.pose = pose;
@@ -251,6 +255,12 @@ public final class MecanumDrive {
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }
 
+    /**
+     * Set the power of each motor given powers
+     *
+     * @param powers PoseVelocity2d with gamepad inputs to determine forward/back, left/right and rotation
+     * @see org.firstinspires.ftc.teamcode.tuning.LocalizationTest
+     */
     public void setDrivePowers(PoseVelocity2d powers) {
         MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
                 PoseVelocity2dDual.constant(powers, 1));
