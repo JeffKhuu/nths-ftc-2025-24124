@@ -23,7 +23,7 @@ public class FieldConstants {
             {'o', 'o', 'x', 'x', 'o', 'o'},
             {'o', 'o', 'x', 'x', 'o', 'o'},
             {'o', 'o', 'o', 'o', 'o', 'o'},
-            {'o', 'o', 'o', 'o', 'o', 'o'},
+            {'o', 'o', 'o', 'o', 'o', 'o'}, // ඞ
     };
 
     private static Pose2d lastSavedPose = new Pose2d(0, 0, 0);

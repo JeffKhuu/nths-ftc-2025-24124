@@ -44,6 +44,11 @@ public class AutoOpMode extends LinearOpMode {
             writeInitTelemetry(); // Add init telemetry
         }
 
+        if(isStopRequested()) return;
+        telemetry.clear();
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
         if (alliance == null || position == null) // If alliance and position are not specified, crash the opMode.
             throw new NullPointerException("AUTONOMOUS INITIALIZATION COULD NOT PROCEED, ALLIANCES AND STARTING POSITION WERE NOT SET.");
 
@@ -64,17 +69,16 @@ public class AutoOpMode extends LinearOpMode {
         Action testAction = driveTrain.mecanumDrive.actionBuilder(driveTrain.mecanumDrive.pose)
                 .splineTo(new Vector2d(24, 0), 0)
                 .turn(Math.toRadians(90))
+                .turn(Math.toRadians(-90))
+                .splineTo(new Vector2d(48, 24), 0)
+                .turn(Math.toRadians(90))
                 .build();
 
         waitForStart(); // Executes after the START (▶) button is pressed
 
         Actions.runBlocking( // Run a specified sequence of actions
                 new SequentialAction(
-                        testAction,
-                        driveTrain.mecanumDrive.actionBuilder(driveTrain.mecanumDrive.pose)
-                                .splineTo(new Vector2d(48, 0), 0)
-                                .turn(Math.toRadians(-90))
-                                .build()
+                        testAction
                 )
         );
 
@@ -87,11 +91,11 @@ public class AutoOpMode extends LinearOpMode {
 
 
     private void writeInitTelemetry() {
-        telemetry.addLine("PLEASE PROVIDE ALLIANCE AND STARTING POSITIONS IN ORDER FOR AUTONOMOUS TO WORK");
-        telemetry.addLine("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+        telemetry.addLine("<!> PLEASE PROVIDE ALLIANCE AND STARTING POSITIONS IN ORDER FOR AUTONOMOUS TO WORK <!>");
+        telemetry.addLine("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
         telemetry.addData("Alliance", alliance);
         telemetry.addData("Position", position);
-        telemetry.addLine("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
+        telemetry.addLine("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
         telemetry.addData("Preload", autoData.preload());
         telemetry.addData("Cycles", autoData.cycles());
         telemetry.addData("Park?", autoData.park());
