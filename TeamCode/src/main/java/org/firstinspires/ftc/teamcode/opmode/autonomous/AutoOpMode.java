@@ -12,7 +12,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants.ALLIANCE;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants.START_POSITION;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.FieldCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
 @Autonomous(name = "0+0 Auto", preselectTeleOp = "Main Teleop")
@@ -44,7 +45,7 @@ public class AutoOpMode extends LinearOpMode {
             writeInitTelemetry(); // Add init telemetry
         }
 
-        if(isStopRequested()) return;
+        if (isStopRequested()) return;
         telemetry.clear();
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -63,7 +64,7 @@ public class AutoOpMode extends LinearOpMode {
         //endregion
 
         // Instantiate subsystems
-        driveTrain = new DriveTrain(hardwareMap, startPose);
+        driveTrain = new FieldCentricDriveTrain(hardwareMap, startPose);
 
         // Build test paths & actions
         Action testAction = driveTrain.mecanumDrive.actionBuilder(driveTrain.mecanumDrive.pose)

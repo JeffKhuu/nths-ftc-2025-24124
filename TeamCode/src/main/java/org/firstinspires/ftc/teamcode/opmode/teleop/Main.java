@@ -3,18 +3,18 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.hardware.motors.MotorEx;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.FieldCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
+import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
+import org.firstinspires.ftc.teamcode.utilities.ToggleSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryMaster;
 
@@ -27,38 +27,46 @@ public class Main extends OpMode {
     private DriveTrain driveTrain;
     private Slide slides;
     private Claw claw;
-    private DcMotorEx slideMotor;
 
     private TelemetryEx telemetryEx;
     private TelemetryMaster telemetryMaster;
 
+    private final ToggleSelect<Claw.ClawState> clawStateToggle = new ToggleSelect<>(Claw.ClawState.OPEN, Claw.ClawState.CLOSED);
+    private final CarouselSelect<Slide.SlideState> slideStateCarousel = new CarouselSelect<>(
+            new Slide.SlideState[]{Slide.SlideState.HOME, Slide.SlideState.HIGH_BUCKET}
+    );
+
     @Override
     public void init() {
-        // Instantiate teleOp Systems
-        driveTrain = new DriveTrain(hardwareMap, FieldConstants.getLastSavedPose());
+        //region Instantiate TeleOp Systems
+        driveTrain = new FieldCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose()); // TODO: Factory Pattern?
         slides = new Slide(hardwareMap);
         claw = new Claw(hardwareMap);
+        //endregion
 
-        slideMotor = hardwareMap.get(DcMotorEx.class, "leftSlide");
-
-        // Register gamepad inputs
+        //region Register Gamepad Inputs
         driver = ControllerEx.Builder(gamepad1)
                 .bind(GamepadKeys.Button.LEFT_BUMPER, new InstantCommand(() -> driveTrain.speeds.moveSelection(-1)))
                 .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::moveSelection))
 
-                //.bindWhileHeld(GamepadKeys.Button.DPAD_UP, slides.extend())
-                //.bindWhileHeld(GamepadKeys.Button.DPAD_DOWN, slides.retract())
+                .bindWhenHeld(GamepadKeys.Button.DPAD_UP, slides.extend()) // TODO: Test if THIS works- if not uncomment code and remove end() overrided method from commands
+                //.bindWhenReleased(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides::setZeroPower))
 
-                .bind(GamepadKeys.Button.A, claw.moveClaw(Claw.ClawState.OPEN))
-                .bind(GamepadKeys.Button.B, claw.moveClaw(Claw.ClawState.CLOSED))
+                .bindWhenHeld(GamepadKeys.Button.DPAD_DOWN, slides.retract())
+                //.bindWhenReleased(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides::setZeroPower))
+
+
+                .bind(GamepadKeys.Button.X, claw.moveClaw(clawStateToggle.toggle().getSelected()))
 
                 .bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
                 .build();
+        //endregion
 
-        // Setup extended telemetry
+        //region Setup Extended Telemetry
         telemetryEx = new TelemetryEx(telemetry);
         telemetryMaster = new TelemetryMaster(telemetryEx)
                 .subscribe(driveTrain);
+        //endregion
 
         telemetry.addData("Status", "Initialized");
     }
@@ -69,18 +77,9 @@ public class Main extends OpMode {
         telemetryMaster.update(); //Updates telemetry for all subscribed systems
 
         double x = driver.getLeftX();
-        double y = driver.getLeftY(); // Values: -1 (Pull up) to 1 (Pull down)
+        double y = driver.getLeftY();
         double turn = driver.getRightX();
         driveTrain.move(x, y, turn);
-
-        if(gamepad1.dpad_up){
-            slideMotor.setPower(0.75);
-        }else if(gamepad1.dpad_down){
-            slideMotor.setPower(-0.75);
-        }
-        else{
-            slideMotor.setPower(0);
-        }
 
         telemetryEx.print("Status", "Runtime: " + getRuntime());
     }

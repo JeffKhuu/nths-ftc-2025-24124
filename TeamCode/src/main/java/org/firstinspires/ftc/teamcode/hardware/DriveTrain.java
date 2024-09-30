@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.hardware.subsystems;
+package org.firstinspires.ftc.teamcode.hardware;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.arcrobotics.ftclib.command.SubsystemBase;
@@ -11,15 +11,16 @@ import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
 /**
- * Field-Centric Mecanum Drive Train using RoadRunner MecanumDrive class
+ * Foundational Mecanum Drive Train abstract class. Requires a move method and constructor.
+ * Makes use of {@link MecanumDrive} from RoadRunner.
  */
-public class DriveTrain extends SubsystemBase implements TelemetrySubject {
+public abstract class DriveTrain extends SubsystemBase implements TelemetrySubject {
     public final MecanumDrive mecanumDrive; // Roadrunner-Based mecanum drive
     public final CarouselSelect<Double> speeds = new CarouselSelect<>(
             new Double[]{1.0, 0.5, 0.25} // Speed multipliers
     );
 
-    private double botHeading; // Angle in radians the robot is facing
+    public double botHeading; // Angle (in radians) the robot is facing
 
     public DriveTrain(HardwareMap hardwareMap, Pose2d pose2d) {
         mecanumDrive = new MecanumDrive(hardwareMap, pose2d);
@@ -27,28 +28,12 @@ public class DriveTrain extends SubsystemBase implements TelemetrySubject {
     }
 
     @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
+    public void periodic() { // This method will be called once per scheduler run
         botHeading = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);// Update Bot Heading
         mecanumDrive.updatePoseEstimate();
     }
 
-    public void move(double x, double y, double turn) {
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading); // Field Centric Drive Train
-        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-        rotX *= 1.1; // Counteract imperfect strafing
-
-        double normalize = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(turn), 1);
-        double leftPower = (rotY + rotX + turn) / normalize;
-        double leftBackPower = (rotY - rotX + turn) / normalize;
-        double rightPower = (rotY - rotX - turn) / normalize;
-        double rightBackPower = (rotY + rotX - turn) / normalize;
-
-        setDrivePower(leftPower * speeds.getSelected(),
-                leftBackPower * speeds.getSelected(),
-                rightPower * speeds.getSelected(),
-                rightBackPower * speeds.getSelected());
-    }
+    public abstract void move(double x, double y, double turn);
 
     /**
      * The method used to move the drive train given four powers for each of the motors.

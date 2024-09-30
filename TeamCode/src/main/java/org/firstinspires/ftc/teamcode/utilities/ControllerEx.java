@@ -37,6 +37,16 @@ public class ControllerEx extends GamepadEx {
             return this;
         }
 
+        public ControllerBuilder bindWhenHeld(GamepadKeys.Button button, Command command) {
+            controller.getGamepadButton(button).whenHeld(command);
+            return this;
+        }
+
+        public ControllerBuilder bindWhenReleased(GamepadKeys.Button button, Command command) {
+            controller.getGamepadButton(button).whenReleased(command);
+            return this;
+        }
+
         public ControllerEx build() {
             return controller;
         }
