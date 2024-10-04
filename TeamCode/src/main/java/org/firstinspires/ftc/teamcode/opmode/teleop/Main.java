@@ -9,14 +9,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
+import org.firstinspires.ftc.teamcode.hardware.TestDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.FieldCentricDriveTrain;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
 import org.firstinspires.ftc.teamcode.utilities.ToggleSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryMaster;
+
+import java.io.Console;
 
 @TeleOp(name = "Main TeleOp", group = "ඞ")
 public class Main extends OpMode {
@@ -39,7 +43,7 @@ public class Main extends OpMode {
     @Override
     public void init() {
         //region Instantiate TeleOp Systems
-        driveTrain = new FieldCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose()); // TODO: Factory Pattern?
+        driveTrain = new RobotCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose()); // TODO: Factory Pattern?
         slides = new Slide(hardwareMap);
         claw = new Claw(hardwareMap);
         //endregion
@@ -48,6 +52,7 @@ public class Main extends OpMode {
         driver = ControllerEx.Builder(gamepad1)
                 .bind(GamepadKeys.Button.LEFT_BUMPER, new InstantCommand(() -> driveTrain.speeds.moveSelection(-1)))
                 .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::moveSelection))
+                //.bind(GamepadKeys.Button.B, slides.moveToPosition(Slide.SlideState.HIGH_BUCKET))
 
                 .bindWhenHeld(GamepadKeys.Button.DPAD_UP, slides.extend()) // TODO: Test if THIS works- if not uncomment code and remove end() overrided method from commands
                 //.bindWhenReleased(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides::setZeroPower))
@@ -56,9 +61,9 @@ public class Main extends OpMode {
                 //.bindWhenReleased(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides::setZeroPower))
 
 
-                .bind(GamepadKeys.Button.X, claw.moveClaw(clawStateToggle.toggle().getSelected()))
+                .bind(GamepadKeys.Button.X, claw.toggleClaw())
 
-                .bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
+                //.bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
                 .build();
         //endregion
 
@@ -81,6 +86,11 @@ public class Main extends OpMode {
         double turn = driver.getRightX();
         driveTrain.move(x, y, turn);
 
+        if(gamepad1.b){
+            clawStateToggle.toggle();
+        }
+
+        telemetryEx.print("Position", slides.leftSlide.getCurrentPosition());
         telemetryEx.print("Status", "Runtime: " + getRuntime());
     }
 

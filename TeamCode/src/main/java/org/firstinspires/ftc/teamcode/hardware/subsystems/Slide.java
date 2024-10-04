@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
  */
 public class Slide extends SubsystemBase implements TelemetrySubject {
 
-    private final DcMotorEx leftSlide;
+    public final DcMotorEx leftSlide;
     //DcMotorEx rightSlide = null;
 
     public enum SlideState {
@@ -23,7 +23,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         LOW_RUNG(0),
         LOW_BUCKET(0),
         HIGH_RUNG(0),
-        HIGH_BUCKET(4125);
+        HIGH_BUCKET(10250);
 
         final int position;
 
@@ -32,7 +32,10 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         }
     }
 
-    private final double SPEED = 0.75;
+    private static final double SPEED = 0.75;
+
+    private static final int MIN = SlideState.HOME.position;
+    private static final int MAX = SlideState.HIGH_BUCKET.position;
 
 
     public Slide(HardwareMap hardwareMap) {
@@ -44,16 +47,16 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
         // Reset Encoder Positions
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        if(leftSlide.getCurrentPosition() != SlideState.HOME.position){
+            // Reset the left slide to the bottom
 
-        // Reset the left slide to the bottom
-        leftSlide.setTargetPosition(0);
-
-        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftSlide.setTargetPosition(SlideState.HOME.position);
-        leftSlide.setPower(SPEED);
-
+            leftSlide.setTargetPosition(SlideState.HOME.position);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setPower(SPEED);
+        }
 
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftSlide.setPower(0);
     }
 
     @Override
@@ -63,7 +66,16 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
     @Override
     public void periodic() {
-        super.periodic();
+        if(leftSlide.getCurrentPosition() > MAX){
+            leftSlide.setTargetPosition(MAX);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setPower(Slide.SPEED);
+        }
+        else if(leftSlide.getCurrentPosition() < MIN){
+            leftSlide.setTargetPosition(MIN);
+            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftSlide.setPower(Slide.SPEED);
+        }
     }
 
 
@@ -75,8 +87,12 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         return new Move(this, -SPEED);
     }
 
-    public MoveToPosition moveToPosition(SlideState state) {
-        return new MoveToPosition(this, state);
+    public MoveToPosition moveTo(SlideState state) {
+        return new MoveToPosition(this, state.position);
+    }
+
+    public MoveToPosition moveTo(int position){
+        return new MoveToPosition(this, position);
     }
 
     public void setZeroPower() {
@@ -106,7 +122,10 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
         @Override
         public void execute() {
-            slideSubsystem.leftSlide.setPower(power);
+            if(slideSubsystem.leftSlide.getCurrentPosition() <= MAX &&
+                    slideSubsystem.leftSlide.getCurrentPosition() >= MIN){
+                slideSubsystem.leftSlide.setPower(power);
+            }
         }
 
         // Run once after the command is unscheduled
@@ -124,17 +143,17 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         private final Slide slideSubsystem;
         private final int encoderPos;
 
-        MoveToPosition(Slide subsystem, SlideState state) {
+        MoveToPosition(Slide subsystem, int position) {
             slideSubsystem = subsystem;
-            encoderPos = state.position;
+            encoderPos = position;
             addRequirements(slideSubsystem);
         }
 
         @Override
         public void initialize() {
-            slideSubsystem.leftSlide.setTargetPosition(encoderPos);
             slideSubsystem.leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            slideSubsystem.leftSlide.setPower(slideSubsystem.SPEED);
+            slideSubsystem.leftSlide.setTargetPosition(encoderPos);
+            slideSubsystem.leftSlide.setPower(Slide.SPEED);
         }
     }
 

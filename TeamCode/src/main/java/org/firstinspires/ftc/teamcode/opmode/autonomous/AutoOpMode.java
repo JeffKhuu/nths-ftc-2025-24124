@@ -68,11 +68,7 @@ public class AutoOpMode extends LinearOpMode {
 
         // Build test paths & actions
         Action testAction = driveTrain.mecanumDrive.actionBuilder(driveTrain.mecanumDrive.pose)
-                .splineTo(new Vector2d(24, 0), 0)
-                .turn(Math.toRadians(90))
-                .turn(Math.toRadians(-90))
-                .splineTo(new Vector2d(48, 24), 0)
-                .turn(Math.toRadians(90))
+                .strafeTo(new Vector2d(0, 24))
                 .build();
 
         waitForStart(); // Executes after the START (▶) button is pressed

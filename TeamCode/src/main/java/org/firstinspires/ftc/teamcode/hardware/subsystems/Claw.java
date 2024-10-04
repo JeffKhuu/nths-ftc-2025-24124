@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 public class Claw extends SubsystemBase implements TelemetrySubject {
     public Servo claw;
     public enum ClawState {
-        OPEN(1.0),
-        CLOSED(0.0);
+        OPEN(0.6),
+        CLOSED(1.0);
 
         public final double position;
         ClawState(double position){ // Attach an int to the enum
@@ -38,6 +38,10 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         return new MoveClaw(position, this);
     }
 
+    public ToggleClaw toggleClaw(){
+        return new ToggleClaw(this);
+    }
+
     /**
      * FTCLib command that moves the claw to a specified claw state or position.
      * Uses the {@link Claw} Subsystem
@@ -61,6 +65,29 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         @Override
         public void initialize() {
             claw.claw.setPosition(position);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
+    }
+
+    public static class ToggleClaw extends CommandBase{
+        private final Claw claw;
+
+        public ToggleClaw(Claw subsystem){
+            claw = subsystem;
+            addRequirements(claw);
+        }
+
+        @Override
+        public void initialize() {
+            if(claw.claw.getPosition() == ClawState.CLOSED.position){
+                claw.claw.setPosition(ClawState.OPEN.position);
+            }else{
+                claw.claw.setPosition(ClawState.CLOSED.position);
+            }
         }
 
         @Override
