@@ -9,18 +9,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.TestDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.FieldCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
-import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
-import org.firstinspires.ftc.teamcode.utilities.ToggleSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryMaster;
-
-import java.io.Console;
 
 @TeleOp(name = "Main TeleOp", group = "ඞ")
 public class Main extends OpMode {
@@ -35,11 +29,6 @@ public class Main extends OpMode {
     private TelemetryEx telemetryEx;
     private TelemetryMaster telemetryMaster;
 
-    private final ToggleSelect<Claw.ClawState> clawStateToggle = new ToggleSelect<>(Claw.ClawState.OPEN, Claw.ClawState.CLOSED);
-    private final CarouselSelect<Slide.SlideState> slideStateCarousel = new CarouselSelect<>(
-            new Slide.SlideState[]{Slide.SlideState.HOME, Slide.SlideState.HIGH_BUCKET}
-    );
-
     @Override
     public void init() {
         //region Instantiate TeleOp Systems
@@ -48,24 +37,24 @@ public class Main extends OpMode {
         claw = new Claw(hardwareMap);
         //endregion
 
-        //region Register Gamepad Inputs
         driver = ControllerEx.Builder(gamepad1)
-                .bind(GamepadKeys.Button.LEFT_BUMPER, new InstantCommand(() -> driveTrain.speeds.moveSelection(-1)))
-                .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::moveSelection))
-                //.bind(GamepadKeys.Button.B, slides.moveToPosition(Slide.SlideState.HIGH_BUCKET))
+                // Speed Control
+                .bind(GamepadKeys.Button.LEFT_BUMPER, new InstantCommand(driveTrain.speeds::next))
+                .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::previous))
 
-                .bindWhenHeld(GamepadKeys.Button.DPAD_UP, slides.extend()) // TODO: Test if THIS works- if not uncomment code and remove end() overrided method from commands
-                //.bindWhenReleased(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides::setZeroPower))
-
+                // Slides
+                .bindWhenHeld(GamepadKeys.Button.DPAD_UP, slides.extend())
                 .bindWhenHeld(GamepadKeys.Button.DPAD_DOWN, slides.retract())
-                //.bindWhenReleased(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides::setZeroPower))
+                .bind(GamepadKeys.Button.DPAD_LEFT, slides.moveTo(slides.positions.next().getSelected()))
+                .bind(GamepadKeys.Button.DPAD_RIGHT, slides.moveTo(slides.positions.previous().getSelected()))
 
+                .bind(GamepadKeys.Button.B, slides.moveTo(slides.positions.getSelected()))
 
+                // Claw
                 .bind(GamepadKeys.Button.X, claw.toggleClaw())
 
                 //.bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
                 .build();
-        //endregion
 
         //region Setup Extended Telemetry
         telemetryEx = new TelemetryEx(telemetry);
@@ -73,7 +62,7 @@ public class Main extends OpMode {
                 .subscribe(driveTrain);
         //endregion
 
-        telemetry.addData("Status", "Initialized");
+        telemetryEx.print("Status", "Initialized");
     }
 
     @Override
@@ -86,17 +75,6 @@ public class Main extends OpMode {
         double turn = driver.getRightX();
         driveTrain.move(x, y, turn);
 
-        if(gamepad1.b){
-            clawStateToggle.toggle();
-        }
-
-        telemetryEx.print("Position", slides.leftSlide.getCurrentPosition());
         telemetryEx.print("Status", "Runtime: " + getRuntime());
-    }
-
-
-    @Override
-    public void stop() {
-        telemetry.addData("Status", "Stopped");
     }
 }

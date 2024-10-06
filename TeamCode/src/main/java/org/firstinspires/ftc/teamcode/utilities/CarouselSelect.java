@@ -40,14 +40,26 @@ public class CarouselSelect<T> {
         return options[currentIndex];
     }
 
+    public T[] getAllOptions() {
+        return options;
+    }
+
     /**
      * Move the index of the carousel by 1. If the index ends out of bounds of the array, it will loop back to the start.
      *
      * @return Returns the CarouselSelect object. Useful for chaining methods.
      */
-    public CarouselSelect<T> moveSelection() {
-        currentIndex = (currentIndex + 1) % options.length;
-        return this;
+    public CarouselSelect<T> next() {
+        return moveSelection(1);
+    }
+
+    /**
+     * Move the index of the carousel by 1. If the index ends out of bounds of the array, it will loop back to the start.
+     *
+     * @return Returns the CarouselSelect object. Useful for chaining methods.
+     */
+    public CarouselSelect<T> previous() {
+        return moveSelection(-1);
     }
 
     /**

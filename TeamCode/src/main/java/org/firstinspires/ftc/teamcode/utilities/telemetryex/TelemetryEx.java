@@ -22,6 +22,17 @@ public class TelemetryEx {
     }
 
     public void printCarousel(CarouselSelect<?> carousel) {
-        // TODO: Print a formatted version of a carousel select
+        StringBuilder str = new StringBuilder();
+        for (int i = 0; i < carousel.getAllOptions().length; i++) {
+            Object element = carousel.getAllOptions()[i];
+
+            if (element == carousel.getSelected()) {
+                str.append("◉ ").append(element.toString());
+            } else {
+                str.append("⭘ ").append(element.toString());
+            }
+        }
+
+        telemetry.addLine(str.toString());
     }
 }
