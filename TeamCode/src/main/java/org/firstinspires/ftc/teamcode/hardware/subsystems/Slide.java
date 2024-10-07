@@ -127,7 +127,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
         @Override
         public void execute() {
-            if (slideSubsystem.leftSlide.getCurrentPosition() <= MAX &&
+            if (slideSubsystem.leftSlide.getCurrentPosition() <= MAX && // Enforce limits
                     slideSubsystem.leftSlide.getCurrentPosition() >= MIN) {
                 slideSubsystem.leftSlide.setPower(power);
             }
@@ -136,7 +136,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         // Run once after the command is unscheduled
         @Override
         public void end(boolean interrupted) {
-            slideSubsystem.leftSlide.setPower(0);
+            slideSubsystem.setZeroPower();
         }
 
     }

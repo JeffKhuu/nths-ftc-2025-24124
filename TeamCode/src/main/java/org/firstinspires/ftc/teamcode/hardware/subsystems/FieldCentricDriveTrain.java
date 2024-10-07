@@ -13,7 +13,7 @@ public class FieldCentricDriveTrain extends DriveTrain {
 
     @Override
     public void move(double x, double y, double turn) {
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading); // Field Centric Drive Train
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
         rotX *= 1.1; // Counteract imperfect strafing
 

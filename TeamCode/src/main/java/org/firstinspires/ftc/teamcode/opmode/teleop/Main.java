@@ -29,6 +29,13 @@ public class Main extends OpMode {
     private TelemetryEx telemetryEx;
     private TelemetryMaster telemetryMaster;
 
+    // TODO: Test RIGHT_STICK_BUTTON turn 90 degrees
+    // TODO: Test Better Drive Train
+    // TODO: Test DPAD_LEFT & DPAD_RIGHT sliding
+    // TODO: Test new claw toggle
+    // TODO: Test speed changing
+    // TODO: Test Telemetry
+
     @Override
     public void init() {
         //region Instantiate TeleOp Systems
@@ -49,6 +56,7 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.DPAD_RIGHT, slides.moveTo(slides.positions.previous().getSelected()))
 
                 .bind(GamepadKeys.Button.B, slides.moveTo(slides.positions.getSelected()))
+                .bind(GamepadKeys.Button.RIGHT_STICK_BUTTON, driveTrain.turn(90))
 
                 // Claw
                 .bind(GamepadKeys.Button.X, claw.toggleClaw())
@@ -59,7 +67,9 @@ public class Main extends OpMode {
         //region Setup Extended Telemetry
         telemetryEx = new TelemetryEx(telemetry);
         telemetryMaster = new TelemetryMaster(telemetryEx)
-                .subscribe(driveTrain);
+                .subscribe(driveTrain)
+                .subscribe(slides)
+                .subscribe(claw);
         //endregion
 
         telemetryEx.print("Status", "Initialized");
@@ -68,12 +78,13 @@ public class Main extends OpMode {
     @Override
     public void loop() {
         CommandScheduler.getInstance().run();
+
         telemetryMaster.update(); //Updates telemetry for all subscribed systems
 
         double x = driver.getLeftX();
         double y = driver.getLeftY();
         double turn = driver.getRightX();
-        driveTrain.move(x, y, turn);
+        driveTrain.move(x, y, turn); // TODO: Snap to 90 degree turns
 
         telemetryEx.print("Status", "Runtime: " + getRuntime());
     }

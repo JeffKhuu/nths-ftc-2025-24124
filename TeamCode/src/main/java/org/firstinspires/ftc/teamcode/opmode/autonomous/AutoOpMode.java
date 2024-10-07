@@ -48,7 +48,7 @@ public class AutoOpMode extends LinearOpMode {
         if (isStopRequested()) return;
         telemetry.clear();
         telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        telemetry.update(); // TODO: Take initialized data and factory pattern? Return Autonomous Instructions?
 
         if (alliance == null || position == null) // If alliance and position are not specified, crash the opMode.
             throw new NullPointerException("AUTONOMOUS INITIALIZATION COULD NOT PROCEED, ALLIANCES AND STARTING POSITION WERE NOT SET.");

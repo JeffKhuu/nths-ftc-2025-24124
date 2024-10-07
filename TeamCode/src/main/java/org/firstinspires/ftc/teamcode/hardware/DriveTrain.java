@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.utilities.ActionCommand;
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Foundational Mecanum Drive Train abstract class. Requires a move method and constructor.
@@ -66,6 +72,9 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
         mecanumDrive.rightBack.setPower(powers[3]);
     }
 
+    /**
+     * Reset the current heading of the drive train.
+     */
     public void resetHeading() {
         mecanumDrive.lazyImu.get().resetYaw();
     }
@@ -74,5 +83,22 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     public void updateTelemetry(TelemetryEx telemetry) {
         telemetry.print("Speed", speeds.getSelected());
         telemetry.print("Heading", botHeading);
+    }
+
+    /**
+     * Simple command to turn a given number of degrees using the RoadRunner drive train
+     *
+     * @param angle Angle in Degrees
+     * @return Returns a FTC-Lib compatible command using RoadRunner actions to turn a certain number of degrees
+     */
+    public ActionCommand turn(int angle) {
+        Set<Subsystem> requirements = new HashSet<>(Collections.singletonList(this));
+
+        return new ActionCommand(
+                mecanumDrive.actionBuilder(mecanumDrive.pose)
+                        .turn(Math.toRadians(angle))
+                        .build(),
+                requirements
+        );
     }
 }
