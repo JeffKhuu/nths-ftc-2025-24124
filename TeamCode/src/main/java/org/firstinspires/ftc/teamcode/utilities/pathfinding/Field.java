@@ -2,8 +2,7 @@ package org.firstinspires.ftc.teamcode.utilities.pathfinding;
 
 import com.acmerobotics.roadrunner.Vector2d;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 
 /*
  * Standard FTC Field layout and code representation:
@@ -12,18 +11,18 @@ import java.util.Map;
  *
  *  From the perspective of the audience, +x is up, -x is down, +y is left, -y right
  *
- *  (72,72)FTC  6        5          4           3           2           1
- *       ----------------------------------------------------------------------
+ *  (72,72)FTC  0        1          2           3           4           5      (72, -72)
+ *       *----------*---------*-----------*-----------*-----------*-----------*
  *       |          |         |           |           |           |           |
- *     6 |          |         |           |           |           |           |
- *       |          |         |           |           |           |           |
- *       ----------------------------------------------------------------------
- *       |          |         |           |           |           |           |
- *     5 |          |         |           |           |           |           |
+ *     0 |          | (60,36) |           |           |           |           |
  *       |          |         |           |           |           |           |
  *       ----------------------------------------------------------------------
  *       |          |         |           |           |           |           |
- *     4 |          |         | (+x, +y)  | (+x, -y)  |           |           |
+ *     1 |          |         |           |           |           |           |
+ *       |          |         |           |           |           |           |
+ *       ----------------------------------------------------------------------
+ *       |          |         |           |           |           |           |
+ *     2 |          |         | (+x, +y)  | (+x, -y)  |           |           |
  *       |          |         |           |           |           |           |
  * BLUE  ------------------------------(0,0)FTC--------------------------------   RED
  *       |          |         |           |           |           |           |
@@ -31,13 +30,13 @@ import java.util.Map;
  *       |          |         |           |           |           |           |
  *       ----------------------------------------------------------------------
  *       |          |         |           |           |           |           |
- *    2  |          |         |           |           |           |           |
+ *    4  |          |         |           |           |           |           |
  *       |          |         |           |           |           |           |
- *       ----------------------------------------------------------------------
+ *       ---------------------------------------------------------*------------
  *       |          |         |           |           |           |           |
- *    1  |          |         |           |           |           |           |
+ *    5  |          |         |           |           |           |           |
  *       |          |         |           |           |           |           |
- *       ---------------------------------------------------------------------- (-72, -72)FTC
+ *       ---------------------------------------------------------------------- *(-72, -72)FTC
  *
  *                                    AUDIENCE
  */
@@ -45,41 +44,36 @@ import java.util.Map;
 
 // TODO: Make a singleton
 // TODO: Implement custom map interpretation from FieldConstants.java
-public class Field {
-    public Map<Vector2d, Node> map = new HashMap<>();
+public enum Field {
+    INSTANCE;
 
-    /**
-     * Creates a representation of an FTC Field following official FTC field coordinate system standards.
-     * For use with Pathfinder class. (The center of the field is defined as zero in the x, and zero in the y.
-     *
-     * @param width  Width of the field in the number of foam tiles (Even numbers work best)
-     * @param height Height of the field in the number of foam tiles (Even numbers work best)
-     * @see <a href="https://ftc-docs.firstinspires.org/en/latest/game_specific_resources/field_coordinate_system/field-coordinate-system.html">Field Coordinate System</a>
-     */
-    public Field(int width, int height) {
-        for (int i = -width / 2; i <= width / 2; i++) {
-            for (int j = -height / 2; j <= -height / 2; j++) {
-                if (i == 0 || j == 0)
-                    continue; // Skip tiles (0, -j...j) and (-i...i, 0) because they don't exist in our representation
+    public final Node[][] map = new Node[FieldConstants.rows][FieldConstants.cols];
+    private static final int INCHES_PER_TILE = -24;
+    private static final int TILE_OFFSET = 60;
 
-                map.put(new Vector2d(i, j), new Node(i, j));
+    Field() {
+        for(int row = 0; row < FieldConstants.rows; row++){
+            for(int col = 0; col < FieldConstants.cols; col++){
+                map[row][col] = Node.Builder(row, col)
+                        .setObstructed(FieldConstants.FIELD_MAP[row][col] == 'x') // If the tile is obstructed on our representation, block out it's corresponding node
+                        .build();
             }
         }
     }
 
-    /**
-     * Overloaded constructor using the default FTC field dimensions. (6 foam tiles x 6 foam tiles) or (144in x 144in)
-     * <p>
-     * Creates a representation of an FTC Field following official FTC field coordinate system standards.
-     * For use with Pathfinder class. (The center of the field is defined as zero in the x, and zero in the y.
-     *
-     * @see <a href="https://ftc-docs.firstinspires.org/en/latest/game_specific_resources/field_coordinate_system/field-coordinate-system.html">Field Coordinate System</a>
-     */
-    public Field() {
-        for (int i = -3; i <= 3; i++) {
-            for (int j = 3 / 2; j <= 3; j++) {
-                map.put(new Vector2d(i, j), new Node(i, j));
-            }
-        }
+    public Node[][] getMap() {
+        return map;
+    }
+
+    public static Vector2d TileToFTC(Vector2d tileCoords){
+        return new Vector2d(
+                (tileCoords.x * INCHES_PER_TILE) + TILE_OFFSET,
+                (tileCoords.y * INCHES_PER_TILE) + TILE_OFFSET);
+    }
+
+    public static Vector2d FTCToTile(Vector2d FTCCoords){
+        return new Vector2d(
+                (FTCCoords.x - 72) / INCHES_PER_TILE,
+                (FTCCoords.y - 72) / INCHES_PER_TILE);
     }
 }

@@ -9,7 +9,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
+import org.firstinspires.ftc.teamcode.hardware.TestDriveTrain;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.BetterRobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.FieldCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
@@ -29,25 +32,25 @@ public class Main extends OpMode {
     private TelemetryEx telemetryEx;
     private TelemetryMaster telemetryMaster;
 
-    // TODO: Test RIGHT_STICK_BUTTON turn 90 degrees
-    // TODO: Test Better Drive Train
-    // TODO: Test DPAD_LEFT & DPAD_RIGHT sliding
-    // TODO: Test new claw toggle
-    // TODO: Test speed changing
-    // TODO: Test Telemetry
+    // TODO: Test RIGHT_STICK_BUTTON turn 90 degrees // FAILED
+    // TODO: Test Better Drive Train // UNTESTED
+    // TODO: Test DPAD_LEFT & DPAD_RIGHT sliding // HALF-FAILED
+    // TODO: Test new claw toggle // FAILED
+    // TODO: Test speed changing // WORKS
+    // TODO: Test Telemetry // FAILED
 
     @Override
     public void init() {
         //region Instantiate TeleOp Systems
-        driveTrain = new RobotCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose()); // TODO: Factory Pattern?
+        driveTrain = new BetterRobotCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose()); // TODO: Factory Pattern?
         slides = new Slide(hardwareMap);
         claw = new Claw(hardwareMap);
         //endregion
 
         driver = ControllerEx.Builder(gamepad1)
                 // Speed Control
-                .bind(GamepadKeys.Button.LEFT_BUMPER, new InstantCommand(driveTrain.speeds::next))
-                .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::previous))
+                .bind(GamepadKeys.Button.LEFT_BUMPER, new InstantCommand(driveTrain.speeds::previous))
+                .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::next))
 
                 // Slides
                 .bindWhenHeld(GamepadKeys.Button.DPAD_UP, slides.extend())
@@ -56,12 +59,12 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.DPAD_RIGHT, slides.moveTo(slides.positions.previous().getSelected()))
 
                 .bind(GamepadKeys.Button.B, slides.moveTo(slides.positions.getSelected()))
-                .bind(GamepadKeys.Button.RIGHT_STICK_BUTTON, driveTrain.turn(90))
+                //.bind(GamepadKeys.Button.RIGHT_STICK_BUTTON, driveTrain.turn(90))
 
                 // Claw
                 .bind(GamepadKeys.Button.X, claw.toggleClaw())
 
-                //.bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
+                .bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
                 .build();
 
         //region Setup Extended Telemetry

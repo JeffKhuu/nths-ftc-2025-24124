@@ -41,8 +41,8 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         return new MoveClaw(position, this);
     }
 
-    public MoveClaw toggleClaw() {
-        return claw.getPosition() == ClawState.CLOSED.position ?
+    public MoveClaw toggleClaw() { // TODO: Test this, if not create new ToggleClaw command
+        return claw.getPosition() == 1.0 ?
                 new MoveClaw(ClawState.OPEN, this)
                 : new MoveClaw(ClawState.CLOSED, this);
     }

@@ -31,6 +31,9 @@ public class BetterRobotCentricDriveTrain extends DriveTrain {
             rightBackPower /= power + Math.abs(turn);
         }
 
-        setDrivePower(leftPower, leftBackPower, rightPower, rightBackPower);
+        setDrivePower(leftPower * speeds.getSelected(),
+                leftBackPower * speeds.getSelected(),
+                rightPower * speeds.getSelected(),
+                rightBackPower * speeds.getSelected());
     }
 }
