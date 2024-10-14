@@ -9,11 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.TestDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.BetterRobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.FieldCentricDriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
@@ -33,7 +30,6 @@ public class Main extends OpMode {
     private TelemetryMaster telemetryMaster;
 
     // TODO: Test RIGHT_STICK_BUTTON turn 90 degrees // FAILED
-    // TODO: Test Better Drive Train // UNTESTED
     // TODO: Test DPAD_LEFT & DPAD_RIGHT sliding // HALF-FAILED
     // TODO: Test new claw toggle // FAILED
     // TODO: Test speed changing // WORKS
