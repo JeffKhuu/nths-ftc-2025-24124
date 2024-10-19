@@ -65,6 +65,7 @@ public final class MecanumDrive {
     //region Params Class
     public static class Params {
         // IMU orientation
+        //TODO Reset these
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =

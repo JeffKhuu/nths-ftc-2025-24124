@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.utilities.pathfinding;
 import com.acmerobotics.roadrunner.Vector2d;
 
 public class Node {
-    Vector2d coordinate;
+    public Vector2d coordinate;
     boolean isObstacle;
 
     private Node parent; // Pointer to another node, used in order to reconstruct our path

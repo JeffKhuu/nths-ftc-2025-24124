@@ -1,6 +1,15 @@
 package org.firstinspires.ftc.teamcode.utilities.pathfinding;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.Vector;
 
 public class Pathfinder {
     /**
@@ -72,16 +82,12 @@ public class Pathfinder {
         return null; // Return null if there is no path.
     }
 
+    /**
+     * Collapse nodes in between straight-line movemeents in order for smoother driving.
+     * @param path Path of Nodes
+     * @return Optimized Path of Nodes
+     */
     public ArrayList<Node> optimizePath(ArrayList<Node> path) {
-        /*
-
-        0,0 -> 1,0 -> 2,0 -> 3,0 -> 4,0 -> 4,1 -> 5,2 -> 6,2 -> 7,3
-        0,0 -> 4,0 -> 4,1 -> 5,2 -> 6,2 -> 7,3
-
-        Algorithm:
-         Loop throuigh all nodes in a path:
-             if(
-         */
         ArrayList<Node> optimized = new ArrayList<>();
         Node first = path.get(0);
         Node last = path.get(path.size() - 1);

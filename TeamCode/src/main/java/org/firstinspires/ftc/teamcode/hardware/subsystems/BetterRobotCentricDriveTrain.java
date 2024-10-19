@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
+import org.firstinspires.ftc.teamcode.utilities.pathfinding.Node;
+
+import java.util.ArrayList;
 
 public class BetterRobotCentricDriveTrain extends DriveTrain {
     public BetterRobotCentricDriveTrain(HardwareMap hardwareMap, Pose2d pose2d) {
@@ -35,5 +41,14 @@ public class BetterRobotCentricDriveTrain extends DriveTrain {
                 leftBackPower * speeds.getSelected(),
                 rightPower * speeds.getSelected(),
                 rightBackPower * speeds.getSelected());
+    }
+
+    public Action followPath(ArrayList<Node> path, Pose2d pose){
+        TrajectoryActionBuilder actionBuilder = mecanumDrive.actionBuilder(pose);
+        for(Node tile : path){
+            actionBuilder.strafeTo(tile.coordinate);
+            actionBuilder.waitSeconds(1);
+        }
+        return actionBuilder.build();
     }
 }
