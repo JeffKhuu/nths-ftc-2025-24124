@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 public class RedLeftAuto extends AutoInstructions {
 
     // Instantiate subsystems
-    Pose2d startPose = new Pose2d(new Vector2d(24,-72),90); //fixme inaccurate pose
+    Pose2d startPose = new Pose2d(new Vector2d(24, -72), 90); //fixme inaccurate pose
 
     RedLeftAuto(LinearOpMode opMode) {
         super(opMode);
@@ -18,8 +18,6 @@ public class RedLeftAuto extends AutoInstructions {
     @Override
     public void execute() {
         opMode.waitForStart(); // Executes after the START (▶) button is pressed
-
-
 
 
         // Executes after the OpMode has completed all above tasks

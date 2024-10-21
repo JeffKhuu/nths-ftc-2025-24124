@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.BetterRobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
+import org.firstinspires.ftc.teamcode.utilities.pathfinding.Pathfinder;
 
 public abstract class AutoInstructions {
     LinearOpMode opMode;
@@ -14,19 +15,22 @@ public abstract class AutoInstructions {
     DriveTrain driveTrain;
     Claw claw;
     Slide slides;
+    Pathfinder pathfinder;
 
-    public AutoInstructions(LinearOpMode opMode){
+    public AutoInstructions(LinearOpMode opMode) {
         this.opMode = opMode;
 
         driveTrain = new BetterRobotCentricDriveTrain(opMode.hardwareMap, getPose());
         claw = new Claw(opMode.hardwareMap);
         slides = new Slide(opMode.hardwareMap);
-        
-        opMode.telemetry.addData("Systems","Initialized");
+        pathfinder = new Pathfinder();
+
+        opMode.telemetry.addData("Systems", "Initialized");
         opMode.telemetry.addData("Status", "Initialized");
         opMode.telemetry.update();
     }
 
     public abstract void execute();
+
     public abstract Pose2d getPose();
 }

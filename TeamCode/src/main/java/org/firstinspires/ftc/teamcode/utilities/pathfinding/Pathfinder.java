@@ -1,15 +1,6 @@
 package org.firstinspires.ftc.teamcode.utilities.pathfinding;
 
-import androidx.annotation.NonNull;
-
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +8,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.Vector;
 
 public class Pathfinder {
     /**
@@ -84,6 +74,7 @@ public class Pathfinder {
 
     /**
      * Collapse nodes in between straight-line movemeents in order for smoother driving.
+     *
      * @param path Path of Nodes
      * @return Optimized Path of Nodes
      */
@@ -130,6 +121,10 @@ public class Pathfinder {
             Vector2d ftcPath = Field.tileToFTC(path.coordinate);
             System.out.println((int) path.coordinate.x + ", " + (int) path.coordinate.y + " (" + (int) ftcPath.x + "," + (int) ftcPath.y + ")FTC");
         }
+
+        Vector2d target = new Vector2d(-60, 60);
+        System.out.println(Field.roundToNearestTile(Field.FTCToTile(target)));
+        System.out.println(Field.tileToFTC(Field.roundToNearestTile(Field.FTCToTile(target))));
     }
     //endregion
 }

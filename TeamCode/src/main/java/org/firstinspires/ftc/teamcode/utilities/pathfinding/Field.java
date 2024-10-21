@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  *  From the perspective of the audience, +x is up, -x is down, +y is left, -y right
  *
- *  (72,72)FTC  0        1          2           3           4           5      (72, -72)
+ *        (60,60)FTC     1          2           3           4           5      (72, -72)FTC
  *       *----------*---------*-----------*-----------*-----------*-----------*
  *       |          |         |           |           |           |           |
  *     0 |          | (60,36) |           |           |           |           |
@@ -37,7 +37,7 @@ import java.util.Objects;
  *       |          |         |           |           |           |           |
  *       ---------------------------------------------------------*------------
  *       |          |         |           |           |           |           |
- *    5  |          |         |           |           |           |           |
+ *    5  |(-60, 60) |         |           |           |           |           |
  *       |          |         |           |           |           |           |
  *       ---------------------------------------------------------------------- *(-72, -72)FTC
  *
@@ -85,6 +85,11 @@ public enum Field {
         return new Vector2d(
                 (FTCCoords.x - 72) / INCHES_PER_TILE,
                 (FTCCoords.y - 72) / INCHES_PER_TILE);
+    }
+
+    // TODO: Round to closest tile
+    public static Vector2d roundToNearestTile(Vector2d tileCoords) {
+        return new Vector2d((int) tileCoords.x, (int) tileCoords.y);
     }
 
     public ArrayList<Node> getNeightbours(Node node) {
