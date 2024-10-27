@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.BetterRobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
@@ -38,7 +38,7 @@ public class Main extends OpMode {
     @Override
     public void init() {
         //region Instantiate TeleOp Systems
-        driveTrain = new BetterRobotCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose()); // TODO: Factory Pattern?
+        driveTrain = new RobotCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose()); // TODO: Factory Pattern?
         slides = new Slide(hardwareMap);
         claw = new Claw(hardwareMap);
         //endregion
