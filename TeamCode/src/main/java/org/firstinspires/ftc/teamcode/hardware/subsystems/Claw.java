@@ -13,7 +13,7 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
 
     public enum ClawState {
         OPEN(0.6),
-        CLOSED(1.0);
+        CLOSED(0.9);
 
         public final double position;
 
@@ -25,6 +25,11 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
     public Claw(HardwareMap hardwareMap) {
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setPosition(ClawState.CLOSED.position);
+    }
+
+    @Override
+    public void periodic() {
+        //isOpen = claw.getPosition() == ClawState.OPEN.position;
     }
 
     @Override
@@ -41,10 +46,33 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         return new MoveClaw(position, this);
     }
 
-    public MoveClaw toggleClaw() { // TODO: Test this, if not create new ToggleClaw command
-        return claw.getPosition() == 1.0 ?
-                new MoveClaw(ClawState.OPEN, this)
-                : new MoveClaw(ClawState.CLOSED, this);
+    public CommandBase toggle() {
+        return new ToggleClaw(this);
+        //return new ToggleClaw(this);
+    }
+
+    /**
+     * FTCLib command that moves the claw to a specified claw state or position.
+     * Uses the {@link Claw} Subsystem
+     */
+    public class ToggleClaw extends CommandBase {
+        public ToggleClaw(Claw subsystem) {
+            addRequirements(subsystem);
+        }
+
+        @Override
+        public void execute() {
+            if(claw.getPosition() != ClawState.OPEN.position){
+                claw.setPosition(ClawState.OPEN.position);
+            }else{
+                claw.setPosition(ClawState.CLOSED.position);
+            }
+        }
+
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
     }
 
     /**

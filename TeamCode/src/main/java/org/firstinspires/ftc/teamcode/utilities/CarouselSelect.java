@@ -74,5 +74,9 @@ public class CarouselSelect<T> {
         return this;
     }
 
+    public void setSelected(int index){
+        currentIndex = index;
+    }
+
 
 }

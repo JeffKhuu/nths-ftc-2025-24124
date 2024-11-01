@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
 
 import java.util.ArrayList;
 
-public class TelemetryMaster {
+public class TelemetryMaster { //TODO: DEPRECATE
     private final TelemetryEx telemetry;
     private final ArrayList<TelemetrySubject> subjects;
 

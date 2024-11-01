@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
 public class Wrist extends SubsystemBase implements TelemetrySubject {
     public enum WristState {
-        HOME(0),
-        INACTIVE(0.4),
-        ACTIVE(0.8);
+        HOME(0.65),
+        INACTIVE(0.5),
+        ACTIVE(0.2);
 
         final double position;
 
@@ -28,7 +28,7 @@ public class Wrist extends SubsystemBase implements TelemetrySubject {
         leftServo = hardwareMap.get(Servo.class, "leftWrist");
         rightServo = hardwareMap.get(Servo.class, "rightWrist");
 
-        leftServo.setDirection(Servo.Direction.FORWARD);
+        leftServo.setDirection(Servo.Direction.REVERSE);
         rightServo.setDirection(Servo.Direction.FORWARD);
 
         leftServo.setPosition(WristState.HOME.position);

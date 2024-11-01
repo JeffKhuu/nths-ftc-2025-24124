@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.utilities.telemetryex;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
 
@@ -7,10 +9,10 @@ import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
  * Extended Telemetry for ease of processing telemetry.
  */
 public class TelemetryEx {
-    private final Telemetry telemetry;
+    private final MultipleTelemetry telemetry;
 
     public TelemetryEx(Telemetry telemetry) {
-        this.telemetry = telemetry;
+        this.telemetry = new MultipleTelemetry(telemetry);
     }
 
     /**

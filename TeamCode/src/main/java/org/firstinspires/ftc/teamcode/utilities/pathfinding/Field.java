@@ -81,7 +81,7 @@ public enum Field {
                 (tileCoords.y * INCHES_PER_TILE) + TILE_OFFSET);
     }
 
-    public static Vector2d FTCToTile(Vector2d FTCCoords) {
+    public static Vector2d  FTCToTile(Vector2d FTCCoords) {
         return new Vector2d(
                 (FTCCoords.x - 72) / INCHES_PER_TILE,
                 (FTCCoords.y - 72) / INCHES_PER_TILE);

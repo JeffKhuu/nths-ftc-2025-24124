@@ -1,165 +1,91 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
-import com.arcrobotics.ftclib.command.CommandBase;
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
-import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
-import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
 /**
  * Example placeholder subsystem to represent viper slide/arm system
  */
-public class Slide extends SubsystemBase implements TelemetrySubject {
+@Config
+public class Slide extends SubsystemBase {
 
     public final DcMotorEx leftSlide;
-    //DcMotorEx rightSlide = null;
+    public final DcMotorEx rightSlide;
+    public final PIDController controller;
+    public final VoltageSensor voltageSensor;
 
     public enum SlideState {
         HOME(0),
-        LOW_RUNG(0),
-        LOW_BUCKET(0),
-        HIGH_RUNG(0),
+        ACTIVE(700),
+        LOW_RUNG(3000),
+        LOW_BUCKET(5000),
+        HIGH_RUNG(7000),
         HIGH_BUCKET(10250);
 
-        final int position;
+        public final int position;
 
         SlideState(int position) {
             this.position = position;
         }
     }
 
-    private static final double SPEED = 0.75;
-
-    private static final int MIN = SlideState.HOME.position;
-    private static final int MAX = SlideState.HIGH_BUCKET.position;
+    public static double p = 0.003, i = 0, d = 0.00001;
+    public static double f = 0; // Feedforward constant
+    //public static int target = 0;
 
     public final CarouselSelect<SlideState> positions = new CarouselSelect<>(
-            new Slide.SlideState[]{Slide.SlideState.HOME, Slide.SlideState.HIGH_BUCKET}
-    );
-
+            new SlideState[]{
+                    SlideState.HOME,
+                    SlideState.ACTIVE,
+                    SlideState.LOW_RUNG,
+                    SlideState.LOW_BUCKET,
+                    SlideState.HIGH_RUNG,
+                    SlideState.HIGH_BUCKET
+            }
+    ); //FIXME
 
     public Slide(HardwareMap hardwareMap) {
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
-        //rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+        voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
         // MAKE SURE THE DIRECTIONS ARE SET PROPERLY
         leftSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // Reset Encoder Positions
-        leftSlide.setTargetPosition(SlideState.HOME.position);
-        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftSlide.setPower(SPEED);
-
-        // Make sure the bottom is always zero
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftSlide.setPower(0);
+        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        positions.setSelected(1);
+        controller = new PIDController(p, i, d);
     }
 
     @Override
-    public void updateTelemetry(TelemetryEx telemetry) {
-        telemetry.print("⎯⎯⎯⎯⎯⎯⎯⎯SLIDES⎯⎯⎯⎯⎯⎯⎯⎯");
-        telemetry.printCarousel(positions);
-        telemetry.print("Left Position", leftSlide.getCurrentPosition());
+    public void periodic() { // TODO: Un-limited slide opMode
+        controller.setPID(p, i, d);
+        int armPos = leftSlide.getCurrentPosition();
+        double pid = controller.calculate(armPos, positions.getSelected().position);
+        double power = (pid + f) * (12.0 / voltageSensor.getVoltage()); // Compensate for voltages
+
+        leftSlide.setPower(power);
+        rightSlide.setPower(power);
     }
 
-    @Override
-    public void periodic() {
-        // Enforce limits on the slides
-        if (leftSlide.getCurrentPosition() > MAX) {
-            leftSlide.setTargetPosition(MAX);
-            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftSlide.setPower(Slide.SPEED);
-        } else if (leftSlide.getCurrentPosition() < MIN) {
-            leftSlide.setTargetPosition(MIN);
-            leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftSlide.setPower(Slide.SPEED);
-        }
-    }
-
-
-    public Move extend() {
-        return new Move(this, SPEED);
-    }
-
-    public Move retract() {
-        return new Move(this, -SPEED);
-    }
-
-    public MoveToPosition moveTo(SlideState state) {
-        return new MoveToPosition(this, state.position);
-    }
-
-    public MoveToPosition moveTo(int position) {
-        return new MoveToPosition(this, position);
-    }
 
     public void setZeroPower() {
+        rightSlide.setPower(0);
         leftSlide.setPower(0);
-    }
-
-
-    /**
-     * A simple command that moves viper slides with the
-     * {@link Slide} Subsystem. Given an amount of power.
-     */
-    public static class Move extends CommandBase {
-        private final Slide slideSubsystem;
-        private final double power;
-
-        public Move(Slide subsystem, double power) {
-            slideSubsystem = subsystem;
-            this.power = power;
-            addRequirements(slideSubsystem);
-        }
-
-        // Run once when the command is scheduled
-        @Override
-        public void initialize() {
-            slideSubsystem.leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        }
-
-        @Override
-        public void execute() {
-            if (slideSubsystem.leftSlide.getCurrentPosition() <= MAX && // Enforce limits
-                    slideSubsystem.leftSlide.getCurrentPosition() >= MIN) {
-                slideSubsystem.leftSlide.setPower(power);
-            }
-        }
-
-        // Run once after the command is unscheduled
-        @Override
-        public void end(boolean interrupted) {
-            slideSubsystem.setZeroPower();
-        }
-
-    }
-
-    /**
-     * A simple command that uses motor encoders to drive viper slides to a specified position. Uses the {@link Slide} Subsystem.
-     */
-    public static class MoveToPosition extends CommandBase {
-        private final Slide slideSubsystem;
-        private final int encoderPos;
-
-        MoveToPosition(Slide subsystem, int position) {
-            slideSubsystem = subsystem;
-            encoderPos = position;
-            addRequirements(slideSubsystem);
-        }
-
-        @Override
-        public void initialize() {
-            slideSubsystem.leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            slideSubsystem.leftSlide.setTargetPosition(encoderPos);
-            slideSubsystem.leftSlide.setPower(Slide.SPEED);
-        }
     }
 
 }
