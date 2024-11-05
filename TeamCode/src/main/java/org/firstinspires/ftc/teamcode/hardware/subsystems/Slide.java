@@ -1,6 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.arcrobotics.ftclib.command.Command;
+import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -10,6 +17,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
+import org.firstinspires.ftc.teamcode.utilities.Utilities;
 
 /**
  * Example placeholder subsystem to represent viper slide/arm system
@@ -25,9 +33,9 @@ public class Slide extends SubsystemBase {
     public enum SlideState {
         HOME(0),
         ACTIVE(700),
-        LOW_RUNG(3000),
-        LOW_BUCKET(5000),
-        HIGH_RUNG(7000),
+        LOW_RUNG(2500),
+        LOW_BUCKET(3000),
+        HIGH_RUNG(5000),
         HIGH_BUCKET(10250);
 
         public final int position;
@@ -37,9 +45,10 @@ public class Slide extends SubsystemBase {
         }
     }
 
-    public static double p = 0.003, i = 0, d = 0.00001;
+    // 0.00075, 0.001, 0.00001
+    public static double p = 0.00825, i = 0.00125, d = 0.00012;
     public static double f = 0; // Feedforward constant
-    //public static int target = 0;
+    public static int target = 0; // Debugging Variable
 
     public final CarouselSelect<SlideState> positions = new CarouselSelect<>(
             new SlideState[]{
@@ -50,7 +59,7 @@ public class Slide extends SubsystemBase {
                     SlideState.HIGH_RUNG,
                     SlideState.HIGH_BUCKET
             }
-    ); //FIXME
+    );
 
     public Slide(HardwareMap hardwareMap) {
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -62,30 +71,55 @@ public class Slide extends SubsystemBase {
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        leftSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        positions.setSelected(1);
+        positions.setSelected(0);
         controller = new PIDController(p, i, d);
+        register();
     }
 
     @Override
-    public void periodic() { // TODO: Un-limited slide opMode
+    public void periodic() {
         controller.setPID(p, i, d);
         int armPos = leftSlide.getCurrentPosition();
         double pid = controller.calculate(armPos, positions.getSelected().position);
         double power = (pid + f) * (12.0 / voltageSensor.getVoltage()); // Compensate for voltages
 
-        leftSlide.setPower(power);
-        rightSlide.setPower(power);
+        setPower(power);
+    }
+
+    public Action moveTo(int target){
+        return (TelemetryPacket packet) -> {
+            int slidePos = leftSlide.getCurrentPosition();
+            double tolerance = 0.01 * target + 1; // Check if we are within 1% of the target, with a constant of 1
+
+            packet.put("Position", slidePos);
+            packet.put("Target", target);
+            packet.put("Position Reached?", Utilities.isBetween(slidePos, target - tolerance, target + tolerance));
+
+            controller.setPID(p, i, d);
+            double pid = controller.calculate(slidePos, target);
+            double power = (pid + f) * (12.0 / voltageSensor.getVoltage()); // Compensate for voltages
+            setPower(power);
+
+            packet.put("Power", power);
+
+            if(Utilities.isBetween(slidePos, target - tolerance, target + tolerance)){
+                setPower(f);
+                return false;
+            }else{
+                return true;
+            }
+        };
     }
 
 
-    public void setZeroPower() {
-        rightSlide.setPower(0);
-        leftSlide.setPower(0);
+    public void setPower(double power) {
+        rightSlide.setPower(power);
+        leftSlide.setPower(power);
     }
 
 }

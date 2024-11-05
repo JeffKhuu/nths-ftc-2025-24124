@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous;
 
 
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -10,11 +11,9 @@ import org.firstinspires.ftc.teamcode.opmode.autonomous.instructions.AutoInstruc
 import org.firstinspires.ftc.teamcode.opmode.autonomous.instructions.AutonomousFactory;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
-@Autonomous(name = "0+0 Auto", preselectTeleOp = "Main Teleop")
+@Autonomous(name = "Auto OpMode", group = "ඞ", preselectTeleOp = "Main TeleOp")
 @AutonomousEx(preload = 0, cycles = 0, park = true)
 public class AutoOpMode extends LinearOpMode {
-    AutonomousEx autoData = getClass().getAnnotation(AutonomousEx.class);
-
     // Location
     boolean startPoseChosen = false;
     ALLIANCE alliance;
@@ -32,33 +31,44 @@ public class AutoOpMode extends LinearOpMode {
 
             if (gamepad1.start) startPoseChosen = true;
             writeInitTelemetry(); // Add init telemetry
+            telemetry.update();
         }
 
+        telemetry.clear();
         if (isStopRequested()) return;
 
-        telemetry.clear();
-        telemetry.addData("Alliance", alliance);
-        telemetry.addData("Position", position);
-
         if (alliance == null || position == null) // If alliance and position are not specified, crash the opMode.
-            throw new NullPointerException("AUTONOMOUS INITIALIZATION COULD NOT PROCEED, ALLIANCES AND STARTING POSITION WERE NOT SET.");
+            throw new NullPointerException("Autonomous could not proceed. Position and/or Alliance values were not set.");
 
         AutoInstructions auto = new AutonomousFactory(this).buildAuto(alliance, position);
-        auto.execute();
+
+        telemetry.addData("Alliance", alliance);
+        telemetry.addData("Position", position);
+        auto.autoInfoTelemetry(telemetry);
+        telemetry.update();
+
+        auto.init();
+        waitForStart();
+        auto.execute(); // Executes after the START (▶) button is pressed
+        auto.stop();
+
+        // Unregister all created subsystems
+        CommandScheduler.getInstance().unregisterSubsystem(auto.driveTrain);
+        CommandScheduler.getInstance().unregisterSubsystem(auto.slides);
+        CommandScheduler.getInstance().unregisterSubsystem(auto.wrist);
+        CommandScheduler.getInstance().unregisterSubsystem(auto.claw);
     }
 
 
     private void writeInitTelemetry() {
         telemetry.addLine("<!> PLEASE PROVIDE ALLIANCE AND STARTING POSITIONS IN ORDER FOR AUTONOMOUS TO WORK <!>");
+        telemetry.addLine("Ⓧ for BLUE alliance | Ⓑ for RED alliance");
+        telemetry.addLine("[←] for LEFT         | [→] for RIGHT ");
         telemetry.addLine("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
         telemetry.addData("Alliance", alliance);
         telemetry.addData("Position", position);
         telemetry.addLine("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
-        telemetry.addData("Preload", autoData.preload());
-        telemetry.addData("Cycles", autoData.cycles());
-        telemetry.addData("Park?", autoData.park());
         telemetry.addLine();
         telemetry.addLine("Press [START] to confirm.");
-        telemetry.update();
     }
 }

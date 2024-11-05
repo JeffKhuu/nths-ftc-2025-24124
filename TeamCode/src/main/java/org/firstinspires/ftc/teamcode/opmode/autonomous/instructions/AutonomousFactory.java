@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.autonomous.instructions;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants.ALLIANCE;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants.START_POSITION;
 

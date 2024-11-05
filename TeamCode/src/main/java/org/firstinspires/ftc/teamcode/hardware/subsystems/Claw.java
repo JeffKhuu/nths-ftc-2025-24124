@@ -1,19 +1,23 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
+import com.acmerobotics.roadrunner.Action;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.utilities.CommandAction;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
 public class Claw extends SubsystemBase implements TelemetrySubject {
     public Servo claw;
+    public boolean isClawOpen;
 
     public enum ClawState {
-        OPEN(0.6),
-        CLOSED(0.9);
+        OPEN(0.65),
+        CLOSED(0.8);
 
         public final double position;
 
@@ -25,6 +29,7 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
     public Claw(HardwareMap hardwareMap) {
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setPosition(ClawState.CLOSED.position);
+        isClawOpen = false;
     }
 
     @Override
@@ -38,35 +43,38 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         telemetry.print("Position", claw.getPosition());
     }
 
-    public MoveClaw moveClaw(ClawState state) {
+    public Action setTo(ClawState state){
+        return new CommandAction(moveClaw(state));
+    }
+
+    public Command moveClaw(ClawState state) {
         return new MoveClaw(state, this);
     }
 
-    public MoveClaw moveClaw(Double position) {
+    public Command moveClaw(Double position) {
         return new MoveClaw(position, this);
     }
 
-    public CommandBase toggle() {
+    public Command toggle() {
         return new ToggleClaw(this);
-        //return new ToggleClaw(this);
     }
 
     /**
      * FTCLib command that moves the claw to a specified claw state or position.
      * Uses the {@link Claw} Subsystem
      */
-    public class ToggleClaw extends CommandBase {
+    public static class ToggleClaw extends CommandBase {
+        Claw claw;
+
         public ToggleClaw(Claw subsystem) {
+            claw = subsystem;
             addRequirements(subsystem);
         }
 
         @Override
         public void execute() {
-            if(claw.getPosition() != ClawState.OPEN.position){
-                claw.setPosition(ClawState.OPEN.position);
-            }else{
-                claw.setPosition(ClawState.CLOSED.position);
-            }
+            claw.claw.setPosition(!claw.isClawOpen ? ClawState.OPEN.position : ClawState.CLOSED.position);
+            claw.isClawOpen = !claw.isClawOpen; // Toggle the position of the claw
         }
 
         @Override

@@ -8,6 +8,9 @@ import com.arcrobotics.ftclib.command.Subsystem;
 
 import java.util.Set;
 
+/**
+ * RoadRunner Action Wrapper Class to convert from a ROADRUNNER ACTION TO A FTCLIB Command
+ */
 public class ActionCommand implements Command {
     private final Action action;
     private final Set<Subsystem> requirements;

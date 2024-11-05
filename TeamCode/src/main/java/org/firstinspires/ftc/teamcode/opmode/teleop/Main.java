@@ -35,10 +35,11 @@ public class Main extends OpMode {
     private Claw claw;
     private Wrist wrist;
 
-    private TelemetryEx telemetryEx;
-    private TelemetryMaster telemetryMaster;
+    //private TelemetryEx telemetryEx;
+    //private TelemetryMaster telemetryMaster;
 
-    private boolean isClawOpen = false;
+    // TODO: Reconstruct TelemetryEx w/ FTCDashboard
+    // TODO: Move slides by set ticks
 
     @Override
     public void init() {
@@ -55,27 +56,24 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.LEFT_BUMPER, new InstantCommand(driveTrain.speeds::previous))
                 .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::next))
                 .bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
-                .bind(GamepadKeys.Button.BACK, wrist.moveWrist(Wrist.WristState.HOME))
 
                 // Slides
-                .bindWhenHeld(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides.positions::next))
-                .bindWhenHeld(GamepadKeys.Button.DPAD_DOWN, new InstantCommand(slides.positions::previous))
+                .bind(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides.positions::next))
+                .bind(GamepadKeys.Button.DPAD_DOWN, new InstantCommand(slides.positions::previous))
 
                 // Claw
-                //.bind(GamepadKeys.Button.X, claw.moveClaw(Claw.ClawState.OPEN))
-                //.bind(GamepadKeys.Button.B, claw.moveClaw(Claw.ClawState.CLOSED))
+                .bind(GamepadKeys.Button.X, claw.toggle())
 
                 // Wrist
-                .bind(GamepadKeys.Button.Y, wrist.moveWrist(Wrist.WristState.INACTIVE))
-                .bind(GamepadKeys.Button.A, wrist.moveWrist(Wrist.WristState.ACTIVE))
+                .bind(GamepadKeys.Button.A, wrist.toggle())
+                .bind(GamepadKeys.Button.BACK, wrist.moveWrist(Wrist.WristState.HOME))
 
                 .build();
 
         //region Setup Extended Telemetry
-        telemetryEx = new TelemetryEx(telemetry);
         //endregion
 
-        telemetryEx.print("Status", "Initialized");
+        telemetry.addData("Status", "Initialized");
     }
 
     @Override
@@ -89,23 +87,28 @@ public class Main extends OpMode {
         double turn = driver.getRightX();
         driveTrain.move(x, y, turn); // TODO: Snap to 90 degree turns
 
-        if(driver.wasJustPressed(GamepadKeys.Button.X)){
-            isClawOpen = !isClawOpen;
-        }
-
-        telemetry.addData("Closed?", isClawOpen);
-
 //        telemetryEx.print("⎯⎯⎯⎯⎯⎯⎯⎯SLIDES⎯⎯⎯⎯⎯⎯⎯⎯");
 //        telemetryEx.printCarousel(slides.positions);
 //        telemetryEx.print("Target", slides.positions.getSelected());
 //        telemetryEx.print("Left Position", slides.leftSlide.getCurrentPosition());
 //        telemetryEx.print("Right Position", slides.rightSlide.getCurrentPosition());
 
+        telemetry.addData("Wrist Active?", wrist.isActive);
+
         telemetry.addData("Target", slides.positions.getSelected().position);
         telemetry.addData("Pos", slides.leftSlide.getCurrentPosition());
+        if(slides.positions.getSelected().position != 0){
+            telemetry.addData("Error", (((double)slides.positions.getSelected().position - (double)slides.leftSlide.getCurrentPosition())/(double)slides.positions.getSelected().position));
+        }
 
+        telemetry.addData("Runtime", "%.2f", getRuntime());
+    }
 
-
-        telemetryEx.print("Status", "Runtime: " + getRuntime());
+    @Override
+    public void stop() {
+        CommandScheduler.getInstance().unregisterSubsystem(driveTrain);
+        CommandScheduler.getInstance().unregisterSubsystem(slides);
+        CommandScheduler.getInstance().unregisterSubsystem(claw);
+        CommandScheduler.getInstance().unregisterSubsystem(wrist);
     }
 }

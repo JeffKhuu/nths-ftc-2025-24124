@@ -39,6 +39,9 @@ public class TelemetryMaster { //TODO: DEPRECATE
      * Update will add data to telemetry from all subsystems in the order they are subscribed in.
      */
     public void update(){
-        subjects.forEach(subject -> subject.updateTelemetry(telemetry));
+        subjects.forEach(subject -> {
+            telemetry.print(subject.getClass().getName().toUpperCase());
+            subject.updateTelemetry(telemetry);
+        });
     }
 }

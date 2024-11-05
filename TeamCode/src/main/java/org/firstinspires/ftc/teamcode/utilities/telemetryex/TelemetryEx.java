@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.utilities.telemetryex;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,7 +13,7 @@ public class TelemetryEx {
     private final MultipleTelemetry telemetry;
 
     public TelemetryEx(Telemetry telemetry) {
-        this.telemetry = new MultipleTelemetry(telemetry);
+        this.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     /**

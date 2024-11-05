@@ -5,7 +5,9 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
+@AutonomousEx(preload = 0, cycles = 0)
 public class RedLeftAuto extends AutoInstructions {
 
     // Instantiate subsystems
@@ -16,16 +18,22 @@ public class RedLeftAuto extends AutoInstructions {
     }
 
     @Override
+    public void init() {
+
+    }
+
+    @Override
     public void execute() {
-        opMode.waitForStart(); // Executes after the START (▶) button is pressed
 
+    }
 
-        // Executes after the OpMode has completed all above tasks
+    @Override
+    public void stop() {
         FieldConstants.savePose(driveTrain.mecanumDrive.pose);
     }
 
     @Override
-    public Pose2d getPose() {
+    public Pose2d getStartPose() {
         return startPose;
     }
 }
