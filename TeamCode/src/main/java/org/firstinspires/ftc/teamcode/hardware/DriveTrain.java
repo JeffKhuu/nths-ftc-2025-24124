@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
-import static org.firstinspires.ftc.teamcode.constants.FieldConstants.lastSavedPose;
-
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -14,7 +12,6 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.utilities.ActionCommand;
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
-import org.firstinspires.ftc.teamcode.utilities.pathfinding.Field;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
@@ -31,11 +28,11 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     public final CarouselSelect<Double> speeds = new CarouselSelect<>(
             new Double[]{1.0, 0.5, 0.25} // Speed multipliers
     );
-    Pose2d pose = new Pose2d(0,0,0);
 
     public double botHeading; // Angle (in radians) the robot is facing
 
     public DriveTrain(HardwareMap hardwareMap, Pose2d pose2d) {
+        FieldConstants.savePose(pose2d);
         mecanumDrive = new MecanumDrive(hardwareMap, pose2d);
         botHeading = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
@@ -109,20 +106,33 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
         );
     }
 
-    public Action strafeTo(int x, int y){
-        return mecanumDrive.actionBuilder(lastSavedPose) //fixme may cause problems
+    /**
+     * Strafe the robot to a set of given coordinates using the RoadRunner drive train
+     *
+     * @param x x coordinate to strafe to
+     * @param y y coordinate to strafe to
+     * @return RoadRunner Action
+     */
+    public Action strafeTo(int x, int y) {
+        Pose2d lastPose = FieldConstants.getLastSavedPose();
+        FieldConstants.savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
+
+        return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
                 .strafeTo(new Vector2d(x, y))
                 .build();
-
     }
 
     /**
      * Turn the robot using the RoadRunner drive train
+     *
      * @param angle Angle in Degrees
      * @return RoadRunner Action
      */
-    public Action turnTo(int angle){
-        return mecanumDrive.actionBuilder(lastSavedPose) //fixme may cause problems
+    public Action turnTo(int angle) {
+        Pose2d lastPose = FieldConstants.getLastSavedPose();
+        FieldConstants.savePose(new Pose2d(lastPose.position, Math.toRadians(angle)));
+
+        return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
                 .turnTo(Math.toRadians(angle))
                 .stopAndAdd(() -> FieldConstants.savePose(new Pose2d(FieldConstants.getLastSavedPose().position, Math.toRadians(angle))))
                 .build();
