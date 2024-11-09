@@ -29,7 +29,7 @@ public class FieldConstants {
     public static final int rows = FIELD_MAP[0].length;
     public static final int cols = FIELD_MAP.length;
 
-    private static Pose2d lastSavedPose = new Pose2d(0, 0, 0);
+    public static Pose2d lastSavedPose = new Pose2d(0, 0, 0);
 
     public static void savePose(Pose2d pose) {
         lastSavedPose = pose;

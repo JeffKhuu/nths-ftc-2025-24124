@@ -32,10 +32,10 @@ public class Slide extends SubsystemBase {
 
     public enum SlideState {
         HOME(0),
-        ACTIVE(700),
-        LOW_RUNG(2500),
-        LOW_BUCKET(3000),
-        HIGH_RUNG(5000),
+        LOW_RUNG(700),
+        LOW_BUCKET(1250),
+        HIGH_RUNG_HANG(2700),
+        HIGH_RUNG(3700),
         HIGH_BUCKET(10250);
 
         public final int position;
@@ -51,14 +51,7 @@ public class Slide extends SubsystemBase {
     public static int target = 0; // Debugging Variable
 
     public final CarouselSelect<SlideState> positions = new CarouselSelect<>(
-            new SlideState[]{
-                    SlideState.HOME,
-                    SlideState.ACTIVE,
-                    SlideState.LOW_RUNG,
-                    SlideState.LOW_BUCKET,
-                    SlideState.HIGH_RUNG,
-                    SlideState.HIGH_BUCKET
-            }
+            SlideState.values()
     );
 
     public Slide(HardwareMap hardwareMap) {

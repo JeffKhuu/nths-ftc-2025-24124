@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous.instructions;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,11 +21,11 @@ public abstract class AutoInstructions {
     public Wrist wrist;
     Pathfinder pathfinder;
 
-    public AutoInstructions(LinearOpMode opMode) {
+    public AutoInstructions(LinearOpMode opMode, Pose2d startPose) {
         this.opMode = opMode;
         // Create all subsystems that can be used in autonomous instructions
         // IMPORTANT: Make sure to unregister subsystesms in AutoOpMode.java
-        driveTrain = new RobotCentricDriveTrain(opMode.hardwareMap, getStartPose());
+        driveTrain = new RobotCentricDriveTrain(opMode.hardwareMap, startPose);
         claw = new Claw(opMode.hardwareMap);
         slides = new Slide(opMode.hardwareMap);
         wrist = new Wrist(opMode.hardwareMap);
@@ -62,7 +63,6 @@ public abstract class AutoInstructions {
         telemetry.addLine("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
     }
 
-    public abstract Pose2d getStartPose();
     public AutonomousEx getAutoData(){
         return getClass().getAnnotation(AutonomousEx.class);
     }

@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -19,8 +20,9 @@ import org.firstinspires.ftc.teamcode.utilities.CommandAction;
 
 @AutonomousEx(preload = 1, cycles = 0)
 public class BlueLeftAuto extends AutoInstructions {
+    private static final Pose2d startPose = new Pose2d(new Vector2d(-0, 0), 0);
     BlueLeftAuto(LinearOpMode opMode) {
-        super(opMode);
+        super(opMode, startPose);
     }
 
     @Override
@@ -47,9 +49,4 @@ public class BlueLeftAuto extends AutoInstructions {
 
     @Override
     public void stop() {}
-
-    @Override
-    public Pose2d getStartPose() {
-        return new Pose2d(0,0,0);
-    }
 }

@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode.hardware;
 
+import static org.firstinspires.ftc.teamcode.constants.FieldConstants.lastSavedPose;
+
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.utilities.ActionCommand;
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
+import org.firstinspires.ftc.teamcode.utilities.pathfinding.Field;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
@@ -25,6 +31,7 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     public final CarouselSelect<Double> speeds = new CarouselSelect<>(
             new Double[]{1.0, 0.5, 0.25} // Speed multipliers
     );
+    Pose2d pose = new Pose2d(0,0,0);
 
     public double botHeading; // Angle (in radians) the robot is facing
 
@@ -100,5 +107,24 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
                         .build(),
                 requirements
         );
+    }
+
+    public Action strafeTo(int x, int y){
+        return mecanumDrive.actionBuilder(lastSavedPose) //fixme may cause problems
+                .strafeTo(new Vector2d(x, y))
+                .build();
+
+    }
+
+    /**
+     * Turn the robot using the RoadRunner drive train
+     * @param angle Angle in Degrees
+     * @return RoadRunner Action
+     */
+    public Action turnTo(int angle){
+        return mecanumDrive.actionBuilder(lastSavedPose) //fixme may cause problems
+                .turnTo(Math.toRadians(angle))
+                .stopAndAdd(() -> FieldConstants.savePose(new Pose2d(FieldConstants.getLastSavedPose().position, Math.toRadians(angle))))
+                .build();
     }
 }
