@@ -62,8 +62,8 @@ public class AutoOpMode extends LinearOpMode {
 
     private void writeInitTelemetry() {
         telemetry.addLine("<!> PLEASE PROVIDE ALLIANCE AND STARTING POSITIONS IN ORDER FOR AUTONOMOUS TO WORK <!>");
-        telemetry.addLine("Ⓧ for BLUE alliance | Ⓑ for RED alliance");
-        telemetry.addLine("[←] for LEFT         | [→] for RIGHT ");
+        telemetry.addLine(String.format("%-22s %-22s", "Ⓧ for BLUE alliance", "Ⓑ for RED alliance"));
+        telemetry.addLine(String.format("%-22s %-22s", "[←] for LEFT", "[→] for RIGHT "));
         telemetry.addLine("⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯");
         telemetry.addData("Alliance", alliance);
         telemetry.addData("Position", position);

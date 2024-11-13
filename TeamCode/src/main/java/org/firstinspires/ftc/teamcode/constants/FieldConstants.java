@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.constants;
 
 import com.acmerobotics.roadrunner.Pose2d;
 
+import java.util.Locale;
+
 public class FieldConstants {
     /**
      * Possible starting positions of the robot used in positioning logic.
@@ -39,4 +41,11 @@ public class FieldConstants {
         return lastSavedPose;
     }
 
+    public static String poseToString(Pose2d pose) {
+        double x = pose.position.x;
+        double y = pose.position.y;
+        double headingRad = pose.heading.toDouble();
+        double headingDeg = Math.toDegrees(headingRad);
+        return String.format(Locale.CANADA, "X: %g, Y: %g | Angle (rad): %+f, Angle (°): %+f", x, y, headingRad, headingDeg);
+    }
 }

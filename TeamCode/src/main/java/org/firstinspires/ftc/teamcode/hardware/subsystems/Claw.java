@@ -16,7 +16,7 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
     public boolean isClawOpen;
 
     public enum ClawState {
-        OPEN(0.65),
+        OPEN(0.55),
         CLOSED(0.8);
 
         public final double position;
@@ -43,7 +43,7 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         telemetry.print("Position", claw.getPosition());
     }
 
-    public Action setTo(ClawState state){
+    public Action setTo(ClawState state) {
         return new CommandAction(moveClaw(state));
     }
 

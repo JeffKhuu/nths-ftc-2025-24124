@@ -1,13 +1,8 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -50,9 +45,7 @@ public class Slide extends SubsystemBase {
     public static double f = 0; // Feedforward constant
     public static int target = 0; // Debugging Variable
 
-    public final CarouselSelect<SlideState> positions = new CarouselSelect<>(
-            SlideState.values()
-    );
+    public final CarouselSelect<SlideState> positions = new CarouselSelect<>(SlideState.values());
 
     public Slide(HardwareMap hardwareMap) {
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
@@ -84,7 +77,7 @@ public class Slide extends SubsystemBase {
         setPower(power);
     }
 
-    public Action moveTo(int target){
+    public Action moveTo(int target) {
         return (TelemetryPacket packet) -> {
             int slidePos = leftSlide.getCurrentPosition();
             double tolerance = 0.01 * target + 1; // Check if we are within 1% of the target, with a constant of 1
@@ -100,10 +93,10 @@ public class Slide extends SubsystemBase {
 
             packet.put("Power", power);
 
-            if(Utilities.isBetween(slidePos, target - tolerance, target + tolerance)){
+            if (Utilities.isBetween(slidePos, target - tolerance, target + tolerance)) {
                 setPower(f);
                 return false;
-            }else{
+            } else {
                 return true;
             }
         };

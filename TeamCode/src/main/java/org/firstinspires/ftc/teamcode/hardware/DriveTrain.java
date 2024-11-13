@@ -3,21 +3,15 @@ package org.firstinspires.ftc.teamcode.hardware;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
-import org.firstinspires.ftc.teamcode.utilities.ActionCommand;
 import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Foundational Mecanum Drive Train abstract class. Requires a move method and constructor.
@@ -30,6 +24,8 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     );
 
     public double botHeading; // Angle (in radians) the robot is facing
+
+    public static Pose2d currentPose; //todo: USE THIS IF FIELDCONSTANTS does not work
 
     public DriveTrain(HardwareMap hardwareMap, Pose2d pose2d) {
         FieldConstants.savePose(pose2d);
@@ -90,30 +86,13 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     }
 
     /**
-     * Simple command to turn a given number of degrees using the RoadRunner drive train
-     *
-     * @param angle Angle in Degrees
-     * @return Returns a FTC-Lib compatible command using RoadRunner actions to turn a certain number of degrees
-     */
-    public ActionCommand turn(int angle) {
-        Set<Subsystem> requirements = new HashSet<>(Collections.singletonList(this));
-
-        return new ActionCommand(
-                mecanumDrive.actionBuilder(mecanumDrive.pose)
-                        .turn(Math.toRadians(angle))
-                        .build(),
-                requirements
-        );
-    }
-
-    /**
      * Strafe the robot to a set of given coordinates using the RoadRunner drive train
      *
      * @param x x coordinate to strafe to
      * @param y y coordinate to strafe to
      * @return RoadRunner Action
      */
-    public Action strafeTo(int x, int y) {
+    public Action strafeTo(double x, double y) {
         Pose2d lastPose = FieldConstants.getLastSavedPose();
         FieldConstants.savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
 
@@ -128,13 +107,12 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
      * @param angle Angle in Degrees
      * @return RoadRunner Action
      */
-    public Action turnTo(int angle) {
+    public Action turnTo(double angle) {
         Pose2d lastPose = FieldConstants.getLastSavedPose();
         FieldConstants.savePose(new Pose2d(lastPose.position, Math.toRadians(angle)));
 
         return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
                 .turnTo(Math.toRadians(angle))
-                .stopAndAdd(() -> FieldConstants.savePose(new Pose2d(FieldConstants.getLastSavedPose().position, Math.toRadians(angle))))
                 .build();
     }
 }
