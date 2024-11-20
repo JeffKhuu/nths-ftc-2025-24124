@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 
 @Config
 @TeleOp(name = "Prototype", group = "ඞ")
-public class Prototype extends LinearOpMode {
+public class Prototype extends OpMode {
     public static double p = 0.022, i = 0, d = 0;
     public static double f = 0.02; // Feedforward constant
     public static int target = 0; // Target value in ticks
@@ -39,24 +39,20 @@ public class Prototype extends LinearOpMode {
     PIDController controller;
 
     @Override
-    public void runOpMode() throws InterruptedException {
-        telemetry.addData("Status", "Init");
-        telemetry.update();
-
+    public void init() {
         claw = hardwareMap.get(Servo.class, "claw");
+        claw.setPosition(0.8);
+    }
 
-        claw.setPosition(0.3);
-
-        waitForStart();
-        telemetry.addLine("Execute");
-        //claw.setPosition(0.5);
-        telemetry.update();
-        if(isStopRequested() || !opModeIsActive()){
-            telemetry.addLine("Stop");
-            claw.setPosition(0.7);
-            telemetry.update();
+    @Override
+    public void loop() {
+        if(gamepad1.x){
+            claw.setPosition(0.6);
+        }else{
+            claw.setPosition(0.8);
         }
     }
+
 
 //    @Override
 //    public void init() {

@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -22,7 +23,6 @@ public class StrafeDebugger extends LinearOpMode {
     Wrist wrist = null;
     Claw claw = null;
     Slide slide = null;
-    MultipleTelemetry telemetry;
 
     public static double startX = 0;
     public static double startY = 0;
@@ -31,6 +31,8 @@ public class StrafeDebugger extends LinearOpMode {
     public static double x = startX;
     public static double y = startY;
     public static double heading = startHeading;
+    public static boolean clawOpen = false;
+    public static boolean armActive = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -44,11 +46,24 @@ public class StrafeDebugger extends LinearOpMode {
         resetRuntime();
 
         while (opModeIsActive()) {
-            if (FieldConstants.getLastSavedPose().position.equals(new Vector2d(x, y))) {
-                driveTrain.strafeTo(x, y);
+            if (!FieldConstants.getLastSavedPose().position.equals(new Vector2d(x, y))) {
+                Actions.runBlocking(driveTrain.strafeTo(x, y));
             } else if (FieldConstants.getLastSavedPose().heading.toDouble() != heading) {
-                driveTrain.turnTo(heading);
+                Actions.runBlocking(driveTrain.turnTo(heading));
             }
+
+            if(clawOpen){
+                Actions.runBlocking(claw.setTo(Claw.ClawState.OPEN));
+            }else{
+                Actions.runBlocking(claw.setTo(Claw.ClawState.CLOSED));
+            }
+
+            if(armActive){
+                Actions.runBlocking(wrist.moveTo(Wrist.WristState.ACTIVE));
+            }else{
+                Actions.runBlocking(wrist.moveTo(Wrist.WristState.INACTIVE));
+            }
+
         }
     }
 }

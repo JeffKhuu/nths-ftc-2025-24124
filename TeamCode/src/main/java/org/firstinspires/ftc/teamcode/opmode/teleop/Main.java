@@ -65,6 +65,7 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.X, claw.toggle())
 
                 // Wrist
+                .bind(GamepadKeys.Button.Y, wrist.moveWrist(Wrist.WristState.HANG))
                 .bind(GamepadKeys.Button.A, wrist.toggle())
                 .bind(GamepadKeys.Button.BACK, wrist.moveWrist(Wrist.WristState.HOME))
 

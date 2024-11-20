@@ -29,8 +29,9 @@ public class Slide extends SubsystemBase {
         HOME(0),
         LOW_RUNG(700),
         LOW_BUCKET(1250),
-        HIGH_RUNG_HANG(2700),
+        HIGH_RUNG_HANG(2050),
         HIGH_RUNG(3700),
+        HIGHER_RUNG(5500),
         HIGH_BUCKET(10250);
 
         public final int position;

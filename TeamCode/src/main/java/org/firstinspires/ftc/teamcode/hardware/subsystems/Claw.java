@@ -15,9 +15,9 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
     public Servo claw;
     public boolean isClawOpen;
 
-    public enum ClawState {
-        OPEN(0.55),
-        CLOSED(0.8);
+    public enum ClawState { // Accepts values between 0.5 and 1.0
+        OPEN(0.65),
+        CLOSED(1.0);
 
         public final double position;
 
