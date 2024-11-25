@@ -34,6 +34,8 @@ public class StrafeDebugger extends LinearOpMode {
     public static boolean clawOpen = false;
     public static boolean armActive = false;
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         driveTrain = new RobotCentricDriveTrain(hardwareMap, new Pose2d(startX, startY, startHeading));

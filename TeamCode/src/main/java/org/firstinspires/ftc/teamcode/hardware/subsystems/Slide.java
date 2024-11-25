@@ -27,11 +27,10 @@ public class Slide extends SubsystemBase {
 
     public enum SlideState {
         HOME(0),
-        LOW_RUNG(700),
-        LOW_BUCKET(1250),
-        HIGH_RUNG_HANG(2050),
+        ACTIVE(500),
+        HOVER(1000),
+        HANG(2650),
         HIGH_RUNG(3700),
-        HIGHER_RUNG(5500),
         HIGH_BUCKET(10250);
 
         public final int position;
@@ -71,7 +70,7 @@ public class Slide extends SubsystemBase {
     @Override
     public void periodic() {
         controller.setPID(p, i, d);
-        int armPos = leftSlide.getCurrentPosition();
+        int armPos = leftSlide.getCurrentPosition(); // target
         double pid = controller.calculate(armPos, positions.getSelected().position);
         double power = (pid + f) * (12.0 / voltageSensor.getVoltage()); // Compensate for voltages
 

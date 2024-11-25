@@ -36,7 +36,7 @@ public class BlueLeftAuto extends AutoInstructions {
                 wrist.moveTo(Wrist.WristState.INACTIVE),
                 slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
                 new SleepAction(1),
-                slides.moveTo(Slide.SlideState.LOW_BUCKET.position),
+                slides.moveTo(Slide.SlideState.HOVER.position),
                 claw.setTo(Claw.ClawState.OPEN),
                 new SleepAction(1),
                 // driveTrain.moveTo(observation station),

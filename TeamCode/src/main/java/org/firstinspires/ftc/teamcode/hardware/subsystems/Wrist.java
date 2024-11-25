@@ -15,9 +15,9 @@ import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 public class Wrist extends SubsystemBase implements TelemetrySubject {
     public enum WristState {
         HOME(0.72),
-        INACTIVE(0.5),
+        INACTIVE(0.52),
         HANG(0.4),
-        ACTIVE(0.2);
+        ACTIVE(0.16);
 
         final double position;
 
@@ -94,6 +94,7 @@ public class Wrist extends SubsystemBase implements TelemetrySubject {
         public void initialize() {
             wrist.leftServo.setPosition(position);
             wrist.rightServo.setPosition(position);
+            wrist.isActive = true; // fixme may cause wrist problems?
         }
 
         @Override

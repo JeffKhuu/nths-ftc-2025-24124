@@ -37,7 +37,7 @@ public class RedRightAuto extends AutoInstructions {
 
                 // Hang Preloaded Specimen
                 new ParallelAction(
-                        slides.moveTo(Slide.SlideState.HIGHER_RUNG.position),
+                        slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
                         driveTrain.strafeTo(12, -40)
                 ),
                 wrist.moveTo(Wrist.WristState.HANG),
@@ -50,7 +50,7 @@ public class RedRightAuto extends AutoInstructions {
                 driveTrain.strafeTo(12, -60),
                 new ParallelAction(
                         driveTrain.turnTo(0),
-                        slides.moveTo(Slide.SlideState.LOW_RUNG.position),
+                        slides.moveTo(Slide.SlideState.ACTIVE.position),
                         wrist.moveTo(Wrist.WristState.ACTIVE)
                 ),
                 driveTrain.strafeTo(48, -60),
@@ -59,7 +59,7 @@ public class RedRightAuto extends AutoInstructions {
 
                 // Hang Preloaded Specimen
                 new ParallelAction(
-                        slides.moveTo(Slide.SlideState.HIGHER_RUNG.position),
+                        slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
                         driveTrain.strafeTo(12, -40)
                 ),
                 wrist.moveTo(Wrist.WristState.HANG),

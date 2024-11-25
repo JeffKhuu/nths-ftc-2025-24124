@@ -29,6 +29,7 @@ public class Main extends OpMode {
     private final ElapsedTime runtime = new ElapsedTime();
 
     private ControllerEx driver;
+    private ControllerEx operator;
 
     private DriveTrain driveTrain;
     private Slide slides;
@@ -57,6 +58,9 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::next))
                 .bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
 
+                .build();
+
+        operator = ControllerEx.Builder(gamepad2)
                 // Slides
                 .bind(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides.positions::next))
                 .bind(GamepadKeys.Button.DPAD_DOWN, new InstantCommand(slides.positions::previous))
@@ -68,8 +72,8 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.Y, wrist.moveWrist(Wrist.WristState.HANG))
                 .bind(GamepadKeys.Button.A, wrist.toggle())
                 .bind(GamepadKeys.Button.BACK, wrist.moveWrist(Wrist.WristState.HOME))
-
                 .build();
+
 
         //region Setup Extended Telemetry
         //endregion
@@ -101,7 +105,6 @@ public class Main extends OpMode {
         if(slides.positions.getSelected().position != 0){
             telemetry.addData("Error", (((double)slides.positions.getSelected().position - (double)slides.leftSlide.getCurrentPosition())/(double)slides.positions.getSelected().position));
         }
-
         telemetry.addData("Runtime", "%.2f", getRuntime());
     }
 
