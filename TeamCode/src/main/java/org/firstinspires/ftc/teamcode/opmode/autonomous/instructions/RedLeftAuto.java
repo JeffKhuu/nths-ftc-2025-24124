@@ -49,7 +49,7 @@ public class RedLeftAuto extends AutoInstructions {
                 // Hang Preloaded Specimen
                 new ParallelAction(
                     slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
-                        driveTrain.strafeTo(-12, -39)
+                        driveTrain.strafeTo(-12, -38)
                 ),
                 wrist.moveTo(Wrist.WristState.HANG),
                 new SleepAction(0.2),
@@ -75,7 +75,7 @@ public class RedLeftAuto extends AutoInstructions {
                 new ParallelAction(
                         driveTrain.strafeTo(-57, -56),
                         slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
-                driveTrain.strafeTo(-59, -59),
+                driveTrain.strafeTo(-59.5, -59.5),
                 claw.setTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
 
@@ -98,7 +98,7 @@ public class RedLeftAuto extends AutoInstructions {
                 new ParallelAction(
                         driveTrain.strafeTo(-57, -56),
                         slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
-                driveTrain.strafeTo(-59, -59),
+                driveTrain.strafeTo(-59.5, -59.5),
                 claw.setTo(Claw.ClawState.OPEN),
                 new SleepAction(0.5),
 

@@ -60,7 +60,7 @@ public class RedRightAuto extends AutoInstructions {
                 // Hang Preloaded Specimen
                 new ParallelAction(
                         slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
-                        driveTrain.strafeTo(12, -40)
+                        driveTrain.strafeTo(10, -40)
                 ),
                 wrist.moveTo(Wrist.WristState.HANG),
                 new SleepAction(0.2),

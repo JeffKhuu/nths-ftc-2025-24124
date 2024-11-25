@@ -16,7 +16,7 @@ public class Wrist extends SubsystemBase implements TelemetrySubject {
     public enum WristState {
         HOME(0.72),
         INACTIVE(0.52),
-        HANG(0.4),
+        HANG(0.45),
         ACTIVE(0.16);
 
         final double position;
