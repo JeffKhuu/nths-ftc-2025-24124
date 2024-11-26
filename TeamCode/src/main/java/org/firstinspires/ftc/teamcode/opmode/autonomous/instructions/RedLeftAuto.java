@@ -55,11 +55,11 @@ public class RedLeftAuto extends AutoInstructions {
                 new SleepAction(0.2),
                 slides.moveTo(Slide.SlideState.HANG.position),
                 claw.setTo(Claw.ClawState.OPEN),
-                new SleepAction(0.4),
+                new SleepAction(0.2),
 
                 // Pick Up Sample
                 new ParallelAction(
-                        driveTrain.strafeTo(-50, -40),
+                        driveTrain.strafeTo(-50, -41),
                         slides.moveTo(Slide.SlideState.ACTIVE.position)
                 ),
                 claw.setTo(Claw.ClawState.OPEN),
@@ -75,7 +75,7 @@ public class RedLeftAuto extends AutoInstructions {
                 new ParallelAction(
                         driveTrain.strafeTo(-57, -56),
                         slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
-                driveTrain.strafeTo(-59.5, -59.5),
+                driveTrain.strafeTo(-59.2, -59.4),
                 claw.setTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
 
@@ -96,11 +96,11 @@ public class RedLeftAuto extends AutoInstructions {
                 // Deposit Sample
                 driveTrain.turnTo(225),
                 new ParallelAction(
-                        driveTrain.strafeTo(-57, -56),
+                        driveTrain.strafeTo(-60, -56),
                         slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
                 driveTrain.strafeTo(-59.5, -59.5),
                 claw.setTo(Claw.ClawState.OPEN),
-                new SleepAction(0.5),
+                new SleepAction(0.2),
 
                 // Park in the ascent zone
                 new ParallelAction(
@@ -108,10 +108,12 @@ public class RedLeftAuto extends AutoInstructions {
                         new SequentialAction(
                                 new ParallelAction(
                                         driveTrain.turnTo(0),
-                                        wrist.moveTo(Wrist.WristState.HOME)
+                                        wrist.moveTo(Wrist.WristState.HOME),
+                                        claw.setTo(Claw.ClawState.CLOSED)
                                 ),
                                 driveTrain.strafeTo(-40, -15),
-                                driveTrain.strafeTo(-18, -15)
+                                driveTrain.strafeTo(-18, -15),
+                                driveTrain.strafeTo(-16, -15)
                         )
                 )
 
