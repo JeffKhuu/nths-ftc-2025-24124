@@ -78,6 +78,8 @@ public class RedLeftAuto extends AutoInstructions {
                 driveTrain.strafeTo(-59.2, -59.4),
                 claw.setTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
+                driveTrain.strafeTo(-57, -57), // FIXME REMOVE THIS IF AUTO STOPS WORKING
+                new SleepAction(0.2),
 
                 // Pick Up Sample
                 driveTrain.turnTo(90),
@@ -111,9 +113,7 @@ public class RedLeftAuto extends AutoInstructions {
                                         wrist.moveTo(Wrist.WristState.HOME),
                                         claw.setTo(Claw.ClawState.CLOSED)
                                 ),
-                                driveTrain.strafeTo(-40, -15),
-                                driveTrain.strafeTo(-18, -15),
-                                driveTrain.strafeTo(-16, -15)
+                                driveTrain.strafeTo(-40, -15)
                         )
                 )
 

@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 public abstract class DriveTrain extends SubsystemBase implements TelemetrySubject {
     public final MecanumDrive mecanumDrive; // Roadrunner-Based mecanum drive
     public final CarouselSelect<Double> speeds = new CarouselSelect<>(
-            new Double[]{1.0, 0.5, 0.25} // Speed multipliers
+            new Double[]{1.0, 0.5} // Speed multipliers
     );
 
     public double botHeading; // Angle (in radians) the robot is facing

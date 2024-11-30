@@ -42,6 +42,7 @@ public class Prototype extends OpMode {
     public void init() {
         claw = hardwareMap.get(Servo.class, "claw");
         claw.setPosition(0.8);
+
     }
 
     @Override
@@ -51,6 +52,8 @@ public class Prototype extends OpMode {
         }else{
             claw.setPosition(0.8);
         }
+
+        //gamepad1.right_trigger
     }
 
 

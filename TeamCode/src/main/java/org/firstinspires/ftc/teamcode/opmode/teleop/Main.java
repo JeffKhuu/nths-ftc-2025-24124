@@ -64,6 +64,8 @@ public class Main extends OpMode {
                 // Slides
                 .bind(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides.positions::next))
                 .bind(GamepadKeys.Button.DPAD_DOWN, new InstantCommand(slides.positions::previous))
+                .bind(GamepadKeys.Button.DPAD_RIGHT, new InstantCommand(() -> slides.positions.setSelected(8))) // Move the slides to the 7th position
+                .bind(GamepadKeys.Button.DPAD_LEFT, new InstantCommand(() -> slides.positions.setSelected(1)))
 
                 // Claw
                 .bind(GamepadKeys.Button.X, claw.toggle())

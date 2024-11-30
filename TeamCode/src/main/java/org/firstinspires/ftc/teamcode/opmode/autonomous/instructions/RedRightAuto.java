@@ -45,29 +45,29 @@ public class RedRightAuto extends AutoInstructions {
                 slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
                 claw.setTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
+                wrist.moveTo(Wrist.WristState.HOME),
+                driveTrain.strafeTo(12, -50),
+
+                // TODO: Push all 3 specimen into the observation station
 
                 // Get Specimen from Observation Station
-                driveTrain.strafeTo(12, -60),
+                driveTrain.strafeTo(48, -50),
                 new ParallelAction(
-                        driveTrain.turnTo(0),
-                        slides.moveTo(Slide.SlideState.ACTIVE.position),
-                        wrist.moveTo(Wrist.WristState.ACTIVE)
+                        driveTrain.turnTo(270),
+                        slides.moveTo(Slide.SlideState.CLIPPER.position)
                 ),
-                driveTrain.strafeTo(48, -60),
-                claw.setTo(Claw.ClawState.CLOSED),
+                driveTrain.strafeTo(48, -70),
+
+                // Hang Specimen using Static Clip
+                new ParallelAction(
+                        driveTrain.strafeTo(8, -50),
+                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position)
+                ),
                 driveTrain.turnTo(90),
-
-                // Hang Preloaded Specimen
-                new ParallelAction(
-                        slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
-                        driveTrain.strafeTo(10, -40)
-                ),
-                wrist.moveTo(Wrist.WristState.HANG),
+                driveTrain.strafeTo(8, -35),
                 new SleepAction(0.2),
-                slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
-                claw.setTo(Claw.ClawState.OPEN),
-                new SleepAction(0.2)
-
+                slides.moveTo(Slide.SlideState.CLIP_HANG.position),
+                driveTrain.strafeTo(8, -50)
         ));
     }
 
