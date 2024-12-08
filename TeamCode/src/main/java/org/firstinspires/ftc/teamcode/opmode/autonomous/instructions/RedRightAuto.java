@@ -32,7 +32,7 @@ public class RedRightAuto extends AutoInstructions {
     @Override
     public void execute() {
         Actions.runBlocking(new SequentialAction(
-                claw.setTo(Claw.ClawState.CLOSED),
+                claw.moveTo(Claw.ClawState.CLOSED),
                 wrist.moveTo(Wrist.WristState.INACTIVE),
                 //1st Specimen Clip
                 // Hang Preloaded Specimen
@@ -43,7 +43,7 @@ public class RedRightAuto extends AutoInstructions {
                 wrist.moveTo(Wrist.WristState.HANG),
                 new SleepAction(0.2),
                 slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
-                claw.setTo(Claw.ClawState.OPEN),
+                claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
                 wrist.moveTo(Wrist.WristState.HOME),
                 driveTrain.strafeTo(12, -50),

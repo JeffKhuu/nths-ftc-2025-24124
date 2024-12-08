@@ -34,8 +34,6 @@ public class StrafeDebugger extends LinearOpMode {
     public static boolean clawOpen = false;
     public static boolean armActive = false;
 
-
-
     @Override
     public void runOpMode() throws InterruptedException {
         driveTrain = new RobotCentricDriveTrain(hardwareMap, new Pose2d(startX, startY, startHeading));
@@ -55,9 +53,9 @@ public class StrafeDebugger extends LinearOpMode {
             }
 
             if(clawOpen){
-                Actions.runBlocking(claw.setTo(Claw.ClawState.OPEN));
+                Actions.runBlocking(claw.moveTo(Claw.ClawState.OPEN));
             }else{
-                Actions.runBlocking(claw.setTo(Claw.ClawState.CLOSED));
+                Actions.runBlocking(claw.moveTo(Claw.ClawState.CLOSED));
             }
 
             if(armActive){

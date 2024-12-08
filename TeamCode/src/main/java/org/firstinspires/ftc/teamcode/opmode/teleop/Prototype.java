@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 
@@ -32,7 +33,7 @@ public class Prototype extends OpMode {
     DcMotorEx rightSlide;
     Servo leftServo;
     Servo rightServo;
-    Servo claw;
+    Claw claw;
     Slide slide;
     Wrist wrist;
 
@@ -40,38 +41,13 @@ public class Prototype extends OpMode {
 
     @Override
     public void init() {
-        claw = hardwareMap.get(Servo.class, "claw");
-        claw.setPosition(0.8);
-
+        claw = new Claw(hardwareMap);
+        slide = new Slide(hardwareMap);
+        wrist = new Wrist(hardwareMap);
     }
 
     @Override
     public void loop() {
-        if(gamepad1.x){
-            claw.setPosition(0.6);
-        }else{
-            claw.setPosition(0.8);
-        }
-
         //gamepad1.right_trigger
     }
-
-
-//    @Override
-//    public void init() {
-//        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-////        slide = new Slide(hardwareMap);
-////        wrist = new Wrist(hardwareMap);
-////        claw = hardwareMap.get(Servo.class, "claw");
-////        claw.setPosition(pos);
-//    }
-//
-//    @Override
-//    public void loop() {
-//        CommandScheduler.getInstance().run();
-//
-//        //telemetry.addData("position", slide.leftSlide.getCurrentPosition());
-//        //telemetry.addData("target", Slide.target);
-//        telemetry.update();
-//    }
 }

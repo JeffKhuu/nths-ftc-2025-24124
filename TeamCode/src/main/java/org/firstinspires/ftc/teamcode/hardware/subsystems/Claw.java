@@ -11,9 +11,18 @@ import org.firstinspires.ftc.teamcode.utilities.CommandAction;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
+/**
+ * One servo based claw system
+ * @version 1.0.0
+ */
 public class Claw extends SubsystemBase implements TelemetrySubject {
-    public Servo claw;
-    public boolean isClawOpen;
+    public static final class Config {
+        // Device name to retrieve from hardwareMap
+        public static final String CLAW_NAME = "claw";
+
+        // Default starting position of the claw
+        public static ClawState start = ClawState.CLOSED;
+    }
 
     public enum ClawState { // Accepts values between 0.5 and 1.0
         OPEN(0.65),
@@ -26,16 +35,15 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         }
     }
 
+    public Servo claw;
+    public boolean isClawOpen;
+
     public Claw(HardwareMap hardwareMap) {
-        claw = hardwareMap.get(Servo.class, "claw");
-        claw.setPosition(ClawState.CLOSED.position);
+        claw = hardwareMap.get(Servo.class, Config.CLAW_NAME);
+        claw.setPosition(Config.start.position);
         isClawOpen = false;
     }
 
-    @Override
-    public void periodic() {
-        //isOpen = claw.getPosition() == ClawState.OPEN.position;
-    }
 
     @Override
     public void updateTelemetry(TelemetryEx telemetry) {
@@ -43,18 +51,37 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         telemetry.print("Position", claw.getPosition());
     }
 
-    public Action setTo(ClawState state) {
-        return new CommandAction(moveClaw(state));
+    /**
+     * Move the claw to a certain position given a ClawState to move to.
+     * @param state A valid ClawState
+     * @return A RoadRunner Action.
+     */
+    public Action moveTo(ClawState state) {
+        return new CommandAction(setTo(state));
     }
 
-    public Command moveClaw(ClawState state) {
+    /**
+     * Set the position of a claw to a given ClawState.
+     * @param state A valid ClawState
+     * @return A FTCLib Command
+     */
+    public Command setTo(ClawState state) {
         return new MoveClaw(state, this);
     }
 
-    public Command moveClaw(Double position) {
+    /**
+     * Set the position of a claw to a given position between 0.0-1.0
+     * @param position A double between 0.0 -> 1.0
+     * @return A FTCLib Command
+     */
+    public Command setTo(Double position) {
         return new MoveClaw(position, this);
     }
 
+    /**
+     * Toggle the position of the claw between open and closed positions
+     * @return A FTCLib Command
+     */
     public Command toggle() {
         return new ToggleClaw(this);
     }

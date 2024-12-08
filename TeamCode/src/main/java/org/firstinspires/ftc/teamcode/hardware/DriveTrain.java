@@ -9,13 +9,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
-import org.firstinspires.ftc.teamcode.utilities.CarouselSelect;
+import org.firstinspires.ftc.teamcode.utilities.selectors.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
 /**
  * Foundational Mecanum Drive Train abstract class. Requires a move method and constructor.
  * Makes use of {@link MecanumDrive} from RoadRunner.
+ * @version 1.0.0
  */
 public abstract class DriveTrain extends SubsystemBase implements TelemetrySubject {
     public final MecanumDrive mecanumDrive; // Roadrunner-Based mecanum drive
@@ -25,11 +26,9 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
 
     public double botHeading; // Angle (in radians) the robot is facing
 
-    public static Pose2d currentPose; //todo: USE THIS IF FIELDCONSTANTS does not work
-
     public DriveTrain(HardwareMap hardwareMap, Pose2d pose2d) {
         FieldConstants.savePose(pose2d);
-        mecanumDrive = new MecanumDrive(hardwareMap, pose2d);
+        mecanumDrive = new MecanumDrive(hardwareMap, pose2d); // Configure motor names in this constructor
         botHeading = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
     }
 
@@ -81,6 +80,7 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
 
     @Override
     public void updateTelemetry(TelemetryEx telemetry) {
+        telemetry.print("⎯⎯⎯⎯⎯⎯⎯⎯DRIVE⎯⎯⎯⎯⎯⎯⎯⎯");
         telemetry.print("Speed", speeds.getSelected());
         telemetry.print("Heading", botHeading);
     }

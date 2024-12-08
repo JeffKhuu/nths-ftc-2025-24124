@@ -23,6 +23,7 @@ public class TelemetryMaster { //TODO: DEPRECATE
      * @return Returns the TelemetryMaster in order to chain methods
      */
     public TelemetryMaster subscribe(TelemetrySubject subject){
+        telemetry.print(subject.getClass().getSimpleName().toUpperCase() + " subscribed to telemetry.");
         subjects.add(subject); return this;
     }
 
@@ -40,7 +41,7 @@ public class TelemetryMaster { //TODO: DEPRECATE
      */
     public void update(){
         subjects.forEach(subject -> {
-            telemetry.print(subject.getClass().getName().toUpperCase());
+            telemetry.print(subject.getClass().getSimpleName().toUpperCase());
             subject.updateTelemetry(telemetry);
         });
     }

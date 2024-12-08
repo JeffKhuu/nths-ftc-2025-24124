@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.utilities;
+package org.firstinspires.ftc.teamcode.utilities.selectors;
 
 /**
- * Looping list of objects with moveable index. When the index reaches the end of the list, it resets to the beginning
+ * Non-looping list of objects with moveable index. When the index reaches the end of the list, it resets to the beginning
  *
  * @param <T> Type of object inside the carousel.
  */
-public class CarouselSelect<T> {
+public class ArraySelect<T> {
     /*
         CarouselSelect representation for array of size four
         -----------------------------------------------------------------------------------
@@ -16,9 +16,9 @@ public class CarouselSelect<T> {
         |                 |                     |                    |                    |
         |                 |                     |                    |                    |
         -----------------------------------------------------------------------------------
-                                                                                ↑ when the index reaches here it starts back at value0
+                                                                                ↑ when the index reaches here you can only go backwards
         currentIndex = 1 (2nd space)
-        moveSelection(3) -> currentIndex = 0
+        moveSelection(3) -> currentIndex = 3
      */
 
     private final T[] options;
@@ -29,7 +29,7 @@ public class CarouselSelect<T> {
      *
      * @param options List of any type. Recommended to be three or greater.
      */
-    public CarouselSelect(T[] options) {
+    public ArraySelect(T[] options) {
         this.options = options;
     }
 
@@ -45,32 +45,37 @@ public class CarouselSelect<T> {
     }
 
     /**
-     * Move the index of the carousel by 1. If the index ends out of bounds of the array, it will loop back to the start.
+     * Move the index of the carousel by 1. If the index ends out of bounds of the array, it will stay at the first or last item.
      *
      * @return Returns the CarouselSelect object. Useful for chaining methods.
      */
-    public CarouselSelect<T> next() {
+    public ArraySelect<T> next() {
         return moveSelection(1);
     }
 
     /**
-     * Move the index of the carousel by 1. If the index ends out of bounds of the array, it will loop back to the start.
+     * Move the index of the carousel by 1. If the index ends out of bounds of the array, it will stay at the first or last item.
      *
      * @return Returns the CarouselSelect object. Useful for chaining methods.
      */
-    public CarouselSelect<T> previous() {
+    public ArraySelect<T> previous() {
         return moveSelection(-1);
     }
 
     /**
-     * Move the index of the carousel by a specified amount. If the index ends out of bounds of the array, it will loop back to the start.
+     * Move the index of the selector by a specified amount. If the index ends out of bounds of the array, it will stay at the first or last item.
      *
      * @param amount Amount to be added to the index
      * @return Returns the CarouselSelect object. Useful for chaining methods.
      */
-    public CarouselSelect<T> moveSelection(int amount) {
-        currentIndex = currentIndex + amount >= 0 ? (currentIndex + amount) % options.length
-                : (options.length + (amount % options.length));
+    public ArraySelect<T> moveSelection(int amount) {
+        if(currentIndex + amount >= 0 && currentIndex + amount < options.length){
+            currentIndex += amount;
+        }else if(currentIndex + amount < 0 ){
+            currentIndex = 0;
+        }else if(currentIndex + amount >= options.length){
+            currentIndex = options.length-1;
+        }
         return this;
     }
 

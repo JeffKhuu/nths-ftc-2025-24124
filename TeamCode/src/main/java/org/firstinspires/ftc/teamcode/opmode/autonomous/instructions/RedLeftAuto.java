@@ -25,7 +25,7 @@ public class RedLeftAuto extends AutoInstructions {
 //            driveTrain.turnTo(225),
 //            slides.moveTo(Slide.SlideState.HIGH_BUCKET.position),
 //            driveTrain.strafeTo(-59, -59),
-//            claw.setTo(Claw.ClawState.OPEN),
+//            claw.moveTo(Claw.ClawState.OPEN),
 //            new SleepAction(1)
 //    );
 
@@ -43,7 +43,7 @@ public class RedLeftAuto extends AutoInstructions {
     @Override
     public void execute() {
         Actions.runBlocking(new SequentialAction(
-                claw.setTo(Claw.ClawState.CLOSED),
+                claw.moveTo(Claw.ClawState.CLOSED),
                 wrist.moveTo(Wrist.WristState.INACTIVE),
 
                 // Hang Preloaded Specimen
@@ -54,7 +54,7 @@ public class RedLeftAuto extends AutoInstructions {
                 wrist.moveTo(Wrist.WristState.HANG),
                 new SleepAction(0.2),
                 slides.moveTo(Slide.SlideState.HANG.position),
-                claw.setTo(Claw.ClawState.OPEN),
+                claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
 
                 // Pick Up Sample
@@ -62,11 +62,11 @@ public class RedLeftAuto extends AutoInstructions {
                         driveTrain.strafeTo(-50, -41),
                         slides.moveTo(Slide.SlideState.ACTIVE.position)
                 ),
-                claw.setTo(Claw.ClawState.OPEN),
+                claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
                 wrist.moveTo(Wrist.WristState.ACTIVE),
                 new SleepAction(0.4),
-                claw.setTo(Claw.ClawState.CLOSED),
+                claw.moveTo(Claw.ClawState.CLOSED),
                 new SleepAction(0.2),
                 wrist.moveTo(Wrist.WristState.INACTIVE),
 
@@ -76,7 +76,7 @@ public class RedLeftAuto extends AutoInstructions {
                         driveTrain.strafeTo(-57, -56),
                         slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
                 driveTrain.strafeTo(-59.2, -59.4),
-                claw.setTo(Claw.ClawState.OPEN),
+                claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
                 driveTrain.strafeTo(-57, -57), // FIXME REMOVE THIS IF AUTO STOPS WORKING
                 new SleepAction(0.2),
@@ -87,11 +87,11 @@ public class RedLeftAuto extends AutoInstructions {
                 new ParallelAction(
                         driveTrain.strafeTo(-60, -40),
                         slides.moveTo(Slide.SlideState.ACTIVE.position)),
-                claw.setTo(Claw.ClawState.OPEN),
+                claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
                 wrist.moveTo(Wrist.WristState.ACTIVE),
                 new SleepAction(0.4),
-                claw.setTo(Claw.ClawState.CLOSED),
+                claw.moveTo(Claw.ClawState.CLOSED),
                 new SleepAction(0.2),
                 wrist.moveTo(Wrist.WristState.INACTIVE),
 
@@ -101,7 +101,7 @@ public class RedLeftAuto extends AutoInstructions {
                         driveTrain.strafeTo(-60, -56),
                         slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
                 driveTrain.strafeTo(-59.5, -59.5),
-                claw.setTo(Claw.ClawState.OPEN),
+                claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
 
                 // Park in the ascent zone
@@ -111,7 +111,7 @@ public class RedLeftAuto extends AutoInstructions {
                                 new ParallelAction(
                                         driveTrain.turnTo(0),
                                         wrist.moveTo(Wrist.WristState.HOME),
-                                        claw.setTo(Claw.ClawState.CLOSED)
+                                        claw.moveTo(Claw.ClawState.CLOSED)
                                 ),
                                 driveTrain.strafeTo(-40, -15)
                         )
