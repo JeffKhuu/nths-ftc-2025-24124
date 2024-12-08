@@ -11,8 +11,6 @@ import org.firstinspires.ftc.teamcode.utilities.CommandAction;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
-import java.util.Locale;
-
 /**
  * Two servo based Wrist sysstem.
  * @version 1.0.0
@@ -92,7 +90,8 @@ public class Wrist extends SubsystemBase implements TelemetrySubject {
     /**
      * Command that toggles the position of the wrist between two set positions
      * following the FTCLib command paradigm.
-     * @see // TODO: Add explanatory link here
+     * @see <a href="https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html">Commands in FRC</a>
+     * @see <a href="https://docs.ftclib.org/ftclib/command-base/command-system">FTCLib Commands</a>
      */
     public static class ToggleWrist extends CommandBase {
         private final Wrist wrist;
@@ -118,7 +117,8 @@ public class Wrist extends SubsystemBase implements TelemetrySubject {
     /**
      * Command that sets the position of the wrist to a given position
      * following the FTCLib command paradigm.
-     * @see @ // TODO: Add explanatory link here
+     * @see <a href="https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html">Commands in FRC</a>
+     * @see <a href="https://docs.ftclib.org/ftclib/command-base/command-system">FTCLib Commands</a>
      */
     public static class SetWristPosition extends CommandBase {
         private final Wrist wrist;

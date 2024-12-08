@@ -8,7 +8,6 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
@@ -17,15 +16,13 @@ import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
-import org.firstinspires.ftc.teamcode.utilities.Utilities;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryMaster;
 
 @Config
 @TeleOp(name = "Main TeleOp", group = "ඞ")
 public class Main extends OpMode {
-    private final ElapsedTime runtime = new ElapsedTime();
-
+    @SuppressWarnings("unused")
     private ControllerEx driver, operator;
 
     private DriveTrain driveTrain;
@@ -45,7 +42,7 @@ public class Main extends OpMode {
         slides = new Slide(hardwareMap);
         claw = new Claw(hardwareMap);
         wrist = new Wrist(hardwareMap);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());;
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //endregion
 
         driver = ControllerEx.Builder(gamepad1)
@@ -88,6 +85,7 @@ public class Main extends OpMode {
 
 
         //region Setup Extended Telemetry
+        telemetryEx = new TelemetryEx(telemetry);
         telemetryMaster = new TelemetryMaster(telemetryEx); // fixme: May break things, idk
         telemetryMaster.subscribe(driveTrain)
                 .subscribe(wrist)
@@ -115,6 +113,11 @@ public class Main extends OpMode {
 
     @Override
     public void stop() {
+        telemetryMaster.unsubscribe(driveTrain);
+        telemetryMaster.unsubscribe(slides);
+        telemetryMaster.unsubscribe(wrist);
+        telemetryMaster.unsubscribe(claw);
+
         CommandScheduler.getInstance().unregisterSubsystem(driveTrain);
         CommandScheduler.getInstance().unregisterSubsystem(slides);
         CommandScheduler.getInstance().unregisterSubsystem(claw);

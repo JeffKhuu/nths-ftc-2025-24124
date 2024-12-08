@@ -1,11 +1,5 @@
 package org.firstinspires.ftc.teamcode.utilities.telemetryex;
 
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.qualcomm.robotcore.hardware.Gamepad;
-
-import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
-
 import java.util.ArrayList;
 
 public class TelemetryMaster { //TODO: DEPRECATE

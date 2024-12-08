@@ -1,19 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.controller.PIDFController;
-import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
@@ -22,6 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 
 @Config
 @TeleOp(name = "Prototype", group = "ඞ")
+@SuppressWarnings("unused")
 public class Prototype extends OpMode {
     public static double p = 0.022, i = 0, d = 0;
     public static double f = 0.02; // Feedforward constant
