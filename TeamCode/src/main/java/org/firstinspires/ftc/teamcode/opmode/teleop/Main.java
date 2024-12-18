@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
@@ -28,7 +29,7 @@ public class Main extends OpMode {
     private DriveTrain driveTrain;
     private Slide slides;
     private Claw claw;
-    private Wrist wrist;
+    private MotorWrist wrist;
 
     private TelemetryEx telemetryEx;
     private TelemetryMaster telemetryMaster;
@@ -41,7 +42,7 @@ public class Main extends OpMode {
         driveTrain = new RobotCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose());
         slides = new Slide(hardwareMap);
         claw = new Claw(hardwareMap);
-        wrist = new Wrist(hardwareMap);
+        wrist = new MotorWrist(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //endregion
 
@@ -61,9 +62,9 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.X, claw.toggle())
 
                 // Wrist
-                .bind(GamepadKeys.Button.Y, wrist.setTo(Wrist.WristState.HANG))
-                .bind(GamepadKeys.Button.A, wrist.toggle())
-                .bind(GamepadKeys.Button.BACK, wrist.setTo(Wrist.WristState.HOME))
+//                .bind(GamepadKeys.Button.Y, wrist.setTo(Wrist.WristState.HANG))
+//                .bind(GamepadKeys.Button.A, wrist.toggle())
+//                .bind(GamepadKeys.Button.BACK, wrist.setTo(Wrist.WristState.HOME))
 
                 .build();
 
@@ -78,9 +79,9 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.X, claw.toggle())
 
                 // Wrist
-                .bind(GamepadKeys.Button.Y, wrist.setTo(Wrist.WristState.HANG))
-                .bind(GamepadKeys.Button.A, wrist.toggle())
-                .bind(GamepadKeys.Button.BACK, wrist.setTo(Wrist.WristState.HOME))
+//                .bind(GamepadKeys.Button.Y, wrist.setTo(Wrist.WristState.HANG))
+//                .bind(GamepadKeys.Button.A, wrist.toggle())
+//                .bind(GamepadKeys.Button.BACK, wrist.setTo(Wrist.WristState.HOME))
                 .build();
 
 
@@ -107,8 +108,8 @@ public class Main extends OpMode {
         double turn = driver.getRightX();
         driveTrain.move(x, y, turn);
 
-        telemetry.addData("Runtime", "%.2f", getRuntime());
         telemetryMaster.update(); //Updates telemetry for all subscribed systems
+        telemetry.addData("\n\nRuntime", "%.2f", getRuntime());
     }
 
     @Override

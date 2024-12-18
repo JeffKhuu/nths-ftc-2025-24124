@@ -47,7 +47,6 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
 
     @Override
     public void updateTelemetry(TelemetryEx telemetry) {
-        telemetry.print("⎯⎯⎯⎯⎯⎯⎯⎯⎯CLAW⎯⎯⎯⎯⎯⎯⎯⎯⎯");
         telemetry.print("Position", claw.getPosition());
     }
 

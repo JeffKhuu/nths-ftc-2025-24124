@@ -80,7 +80,6 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
 
     @Override
     public void updateTelemetry(TelemetryEx telemetry) {
-        telemetry.print("⎯⎯⎯⎯⎯⎯⎯⎯DRIVE⎯⎯⎯⎯⎯⎯⎯⎯");
         telemetry.print("Speed", speeds.getSelected());
         telemetry.print("Heading", botHeading);
     }

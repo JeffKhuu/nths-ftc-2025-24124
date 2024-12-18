@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.utilities.telemetryex;
 
+import com.sun.tools.javac.util.StringUtils;
+
+import org.firstinspires.ftc.teamcode.utilities.Utilities;
+
 import java.util.ArrayList;
 
 public class TelemetryMaster { //TODO: DEPRECATE
@@ -35,8 +39,9 @@ public class TelemetryMaster { //TODO: DEPRECATE
      */
     public void update(){
         subjects.forEach(subject -> {
-            telemetry.print(subject.getClass().getSimpleName().toUpperCase());
+            telemetry.print(Utilities.center(40, subject.getClass().getSimpleName().toUpperCase()));
             subject.updateTelemetry(telemetry);
+            telemetry.print("");
         });
     }
 }

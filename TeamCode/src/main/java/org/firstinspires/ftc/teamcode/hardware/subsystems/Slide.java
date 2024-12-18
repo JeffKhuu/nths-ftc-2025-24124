@@ -113,7 +113,6 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
     public void updateTelemetry(TelemetryEx telemetry) {
         int target = (Config.MODE != SlideMode.MANUAL) ? positions.getSelected().position : Config.target;
 
-        telemetry.print("⎯⎯⎯⎯⎯⎯⎯⎯SLIDES⎯⎯⎯⎯⎯⎯⎯⎯");
         telemetry.print("Target", target);
         telemetry.print(String.format(Locale.CANADA, "Left Slide Pos: %d | Right Slide Pos: %d",
                 leftSlide.getCurrentPosition(), rightSlide.getCurrentPosition()));

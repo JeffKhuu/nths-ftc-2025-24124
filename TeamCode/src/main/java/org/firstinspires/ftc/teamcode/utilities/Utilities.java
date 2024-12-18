@@ -22,4 +22,14 @@ public final class Utilities {
         return (actual / theoretical);
     }
 
+    /**
+     * Centers a string given a size and a valid string
+     * @param width Size to center with
+     * @param s String
+     * @return Centered string
+     */
+    public static String center(int width, String s) {
+        return String.format("%-" + width  + "s", String.format("%" + (s.length() + (width - s.length()) / 2) + "s", s));
+    }
+
 }
