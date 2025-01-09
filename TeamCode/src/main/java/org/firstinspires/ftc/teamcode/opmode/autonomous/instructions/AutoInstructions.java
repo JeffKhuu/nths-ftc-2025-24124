@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
@@ -17,7 +18,7 @@ public abstract class AutoInstructions {
     public DriveTrain driveTrain;
     public Claw claw;
     public Slide slides;
-    public Wrist wrist;
+    public MotorWrist wrist;
     Pathfinder pathfinder;
 
     public AutoInstructions(LinearOpMode opMode, Pose2d startPose) {
@@ -27,8 +28,7 @@ public abstract class AutoInstructions {
         driveTrain = new RobotCentricDriveTrain(opMode.hardwareMap, startPose);
         claw = new Claw(opMode.hardwareMap);
         slides = new Slide(opMode.hardwareMap);
-        wrist = new Wrist(opMode.hardwareMap);
-        pathfinder = new Pathfinder();
+        wrist = new MotorWrist(opMode.hardwareMap);
 
         opMode.telemetry.addData("Systems", "Initialized");
         opMode.telemetry.update();

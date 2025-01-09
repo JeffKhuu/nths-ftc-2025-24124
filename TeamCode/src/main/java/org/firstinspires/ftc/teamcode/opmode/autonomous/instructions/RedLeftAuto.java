@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
@@ -42,83 +43,87 @@ public class RedLeftAuto extends AutoInstructions {
 
     @Override
     public void execute() {
+
         Actions.runBlocking(new SequentialAction(
                 claw.moveTo(Claw.ClawState.CLOSED),
-                wrist.moveTo(Wrist.WristState.INACTIVE),
 
                 // Hang Preloaded Specimen
                 new ParallelAction(
-                    slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
-                        driveTrain.strafeTo(-12, -38)
+                        wrist.moveTo(-170),
+                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position),
+                        driveTrain.strafeTo(-12, -37)
                 ),
-                wrist.moveTo(Wrist.WristState.HANG),
-                new SleepAction(0.2),
-                slides.moveTo(Slide.SlideState.HANG.position),
-                claw.moveTo(Claw.ClawState.OPEN),
-                new SleepAction(0.2),
+                driveTrain.strafeTo(-12, -34),
+                slides.moveTo(Slide.SlideState.CLIP_HANG.position),
+                driveTrain.strafeTo(-34, -50),
 
                 // Pick Up Sample
                 new ParallelAction(
                         driveTrain.strafeTo(-50, -41),
-                        slides.moveTo(Slide.SlideState.ACTIVE.position)
+                        slides.moveTo(Slide.SlideState.HOME.position)
                 ),
                 claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
-                wrist.moveTo(Wrist.WristState.ACTIVE),
-                new SleepAction(0.4),
+                wrist.moveTo(MotorWrist.WristState.ACTIVE.position),
                 claw.moveTo(Claw.ClawState.CLOSED),
                 new SleepAction(0.2),
-                wrist.moveTo(Wrist.WristState.INACTIVE),
+                wrist.moveTo(MotorWrist.WristState.INACTIVE.position),
 
                  // Deposit Sample
                 driveTrain.turnTo(225),
                 new ParallelAction(
-                        driveTrain.strafeTo(-57, -56),
-                        slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
-                driveTrain.strafeTo(-59.2, -59.4),
+                        driveTrain.strafeTo(-53, -53),
+                        slides.moveTo(Slide.SlideState.HIGH_BUCKET.position),
+                        wrist.moveTo(MotorWrist.WristState.INACTIVE.position-50)
+                ),
+                driveTrain.strafeTo(-61, -61),
+
                 claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
-                driveTrain.strafeTo(-57, -57), // FIXME REMOVE THIS IF AUTO STOPS WORKING
+                wrist.moveTo(MotorWrist.WristState.INACTIVE.position+50),
                 new SleepAction(0.2),
 
                 // Pick Up Sample
-                driveTrain.turnTo(90),
-                new SleepAction(0.2),
                 new ParallelAction(
-                        driveTrain.strafeTo(-60, -40),
-                        slides.moveTo(Slide.SlideState.ACTIVE.position)),
+                        slides.moveTo(Slide.SlideState.HOME.position),
+                        new SequentialAction(
+                                driveTrain.strafeTo(-57, -57),
+                                new SleepAction(0.2),
+                                driveTrain.turnTo(90),
+                                new SleepAction(0.2),
+                                driveTrain.strafeTo(-60, -40)
+                        )
+                ),
+
+                wrist.moveTo(MotorWrist.WristState.ACTIVE.position),
                 claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
-                wrist.moveTo(Wrist.WristState.ACTIVE),
-                new SleepAction(0.4),
                 claw.moveTo(Claw.ClawState.CLOSED),
                 new SleepAction(0.2),
-                wrist.moveTo(Wrist.WristState.INACTIVE),
+                wrist.moveTo(MotorWrist.WristState.INACTIVE.position),
 
                 // Deposit Sample
                 driveTrain.turnTo(225),
                 new ParallelAction(
-                        driveTrain.strafeTo(-60, -56),
-                        slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
-                driveTrain.strafeTo(-59.5, -59.5),
+                        driveTrain.strafeTo(-53, -53),
+                        slides.moveTo(Slide.SlideState.HIGH_BUCKET.position),
+                        wrist.moveTo(MotorWrist.WristState.INACTIVE.position-50)
+                ),
+                driveTrain.strafeTo(-61, -61),
+
                 claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
+                wrist.moveTo(MotorWrist.WristState.INACTIVE.position+50),
+                new SleepAction(0.2),
 
-                // Park in the ascent zone
+
+                // Reset for TeleOp
                 new ParallelAction(
+                        driveTrain.turnTo(0),
                         slides.moveTo(Slide.SlideState.HOME.position),
-                        new SequentialAction(
-                                new ParallelAction(
-                                        driveTrain.turnTo(0),
-                                        wrist.moveTo(Wrist.WristState.HOME),
-                                        claw.moveTo(Claw.ClawState.CLOSED)
-                                ),
-                                driveTrain.strafeTo(-40, -15)
-                        )
+                        wrist.moveTo(MotorWrist.WristState.HOME.position),
+                        claw.moveTo(Claw.ClawState.CLOSED)
                 )
-
-
-
         ));
     }
 

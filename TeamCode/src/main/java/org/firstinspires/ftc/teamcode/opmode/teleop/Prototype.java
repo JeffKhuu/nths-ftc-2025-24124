@@ -35,7 +35,7 @@ public class Prototype extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         wrist = hardwareMap.get(DcMotorEx.class, "wrist");
-        wrist.setDirection(DcMotorSimple.Direction.REVERSE);
+        wrist.setDirection(DcMotorSimple.Direction.FORWARD);
         wrist.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         wrist.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }

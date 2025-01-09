@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
@@ -33,39 +34,40 @@ public class RedRightAuto extends AutoInstructions {
     public void execute() {
         Actions.runBlocking(new SequentialAction(
                 claw.moveTo(Claw.ClawState.CLOSED),
-                wrist.moveTo(Wrist.WristState.INACTIVE),
-                //1st Specimen Clip
+
                 // Hang Preloaded Specimen
                 new ParallelAction(
-                        slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
-                        driveTrain.strafeTo(12, -40)
+                        wrist.moveTo(-100),
+                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position),
+                        driveTrain.strafeTo(12, -37)
                 ),
-                wrist.moveTo(Wrist.WristState.HANG),
-                new SleepAction(0.2),
-                slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
-                claw.moveTo(Claw.ClawState.OPEN),
-                new SleepAction(0.2),
-                wrist.moveTo(Wrist.WristState.HOME),
-                driveTrain.strafeTo(12, -50),
+                driveTrain.strafeTo(12, -34),
+                slides.moveTo(Slide.SlideState.CLIP_HANG.position),
+                driveTrain.strafeTo(34, -50),
 
                 // TODO: Push all 3 specimen into the observation station
                 //2nd Specimen Clip
                 // Get Specimen from Observation Station
                 driveTrain.strafeTo(48, -50),
                 new ParallelAction(
+                        //wrist.moveTo(-170),
                         driveTrain.turnTo(270),
-                        slides.moveTo(Slide.SlideState.CLIPPER.position)
+                        slides.moveTo(Slide.SlideState.CLIPPER.position+300)
                 ),
                 driveTrain.strafeTo(48, -70),
+                slides.moveTo(Slide.SlideState.HANG.position),
 
                 // Hang Specimen using Static Clip
                 new ParallelAction(
-                        driveTrain.strafeTo(8, -50),
-                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position)
+                        wrist.moveTo(-100),
+                        driveTrain.strafeTo(8, -50)
+
                 ),
-                driveTrain.strafeTo(8, -35),
                 driveTrain.turnTo(90),
+                slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position + 1000),
+
                 new SleepAction(0.2),
+                driveTrain.strafeTo(8, -32),
                 slides.moveTo(Slide.SlideState.CLIP_HANG.position),
                 driveTrain.strafeTo(8, -50),
 

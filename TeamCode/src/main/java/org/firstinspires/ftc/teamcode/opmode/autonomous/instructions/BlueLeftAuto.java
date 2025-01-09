@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
@@ -27,7 +28,7 @@ public class BlueLeftAuto extends AutoInstructions {
         Actions.runBlocking(new SequentialAction(
                 // driveTrain.moveTo(x, y),
                 claw.moveTo(Claw.ClawState.CLOSED),
-                wrist.moveTo(Wrist.WristState.INACTIVE),
+                wrist.moveTo(MotorWrist.WristState.INACTIVE.position),
                 slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
                 new SleepAction(1),
                 slides.moveTo(Slide.SlideState.HOVER.position),

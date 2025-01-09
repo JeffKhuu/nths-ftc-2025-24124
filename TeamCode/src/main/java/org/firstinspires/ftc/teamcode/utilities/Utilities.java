@@ -9,6 +9,7 @@ public final class Utilities {
      * @return True, if the value is between the min and max, false otherwise.
      */
     public static boolean isBetween(int value, double min, double max){
+        if(min > max) throw new IllegalArgumentException("The minimum value you attempted to compare is greater than your maximum value.");
         return value >= min && value <= max;
     }
 

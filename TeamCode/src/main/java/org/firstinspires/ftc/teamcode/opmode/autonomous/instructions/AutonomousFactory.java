@@ -18,8 +18,8 @@ public class AutonomousFactory {
         else if (alliance == ALLIANCE.RED && position == START_POSITION.ALLIANCE_RIGHT)
             return new RedRightAuto(opMode); // RED ALLIANCE RIGHT
         else if (alliance == ALLIANCE.BLUE && position == START_POSITION.ALLIANCE_LEFT)
-            return new RedLeftAuto(opMode); // BLUE ALLIANCE LEFT
+            return new BlueLeftAuto(opMode); // BLUE ALLIANCE LEFT
         else
-             return new RedRightAuto(opMode); // BLUE ALLIANCE RIGHT
+             return new BlueRightAuto(opMode); // BLUE ALLIANCE RIGHT
     }
 }

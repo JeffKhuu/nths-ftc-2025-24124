@@ -62,9 +62,11 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.X, claw.toggle())
 
                 // Wrist
-//                .bind(GamepadKeys.Button.Y, wrist.setTo(Wrist.WristState.HANG))
-//                .bind(GamepadKeys.Button.A, wrist.toggle())
-//                .bind(GamepadKeys.Button.BACK, wrist.setTo(Wrist.WristState.HOME))
+                .bind(GamepadKeys.Button.A, wrist.toggle())
+                .bind(GamepadKeys.Button.BACK, new InstantCommand(() -> wrist.positions.setSelected(0)))
+                .bind(GamepadKeys.Button.START, new InstantCommand(() -> {
+                    wrist.startFlag = slides.startFlag = true;
+                }))
 
                 .build();
 
@@ -79,9 +81,10 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.X, claw.toggle())
 
                 // Wrist
-//                .bind(GamepadKeys.Button.Y, wrist.setTo(Wrist.WristState.HANG))
-//                .bind(GamepadKeys.Button.A, wrist.toggle())
-//                .bind(GamepadKeys.Button.BACK, wrist.setTo(Wrist.WristState.HOME))
+                .bind(GamepadKeys.Button.A, wrist.toggle())
+                .bind(GamepadKeys.Button.Y, new InstantCommand(() -> wrist.positions.setSelected(3)))
+                .bind(GamepadKeys.Button.BACK, new InstantCommand(() -> wrist.positions.setSelected(0)))
+
                 .build();
 
 

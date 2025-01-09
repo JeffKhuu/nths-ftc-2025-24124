@@ -25,13 +25,13 @@ import java.util.Locale;
  */
 @Config
 public class Slide extends SubsystemBase implements TelemetrySubject {
-    public static final class Config {
+    public static class Config {
         /* Operation mode for slides.
             CONTROLLED allows the slides to be controlled via code and gamepads
             MANUAL allows the slides to only be controlled via RoadRunner parameters
         */
         public static SlideMode MODE = SlideMode.CONTROLLED;
-        public static int target = 0; // Debugging variable used in MANUAL mode
+        public int target = 0; // Debugging variable used in MANUAL mode
 
         //Device names to retrieve from hardwareMap
         public static final String LEFT_MOTOR_NAME = "leftSlide";
@@ -40,28 +40,31 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         // PIDF Controller Coefficients
         // Old Coefficients: 0.00825, 0.00125, 0.00012, 0
         public static PIDFCoefficients coefficients = new PIDFCoefficients(
-                0.005,
-                0.1,
-                0.00025,
-                0.09
+                0.00945,
+                0,
+                0.0001,
+                0
         );
     }
+
+    public static Config CONFIG = new Config();
 
 
     public final DcMotorEx leftSlide, rightSlide;
     public final PIDController controller;
     public final VoltageSensor voltageSensor;
+    public boolean startFlag = false;
 
     public enum SlideState {
         HOME(0),
-        ACTIVE(380), // 500
-        HOVER(760), // 1000
-        CLIPPER(1000), //1500
-        HANG(1700), // 2650
-        HIGH_RUNG(2000), // 3700
-        CLIP_HANG(3200), //5000
-        CLIP_HIGH_CHAMBER(4000), // 7000
-        HIGH_BUCKET(5800); //10250
+        ACTIVE(500), // 380
+        HOVER(1000), // 760
+        CLIPPER(1500), //1000
+        HANG(2650), // 1700
+        HIGH_RUNG(3700), // 2000
+        CLIP_HANG(5000), //3200
+        CLIP_HIGH_CHAMBER(7000), // 4000
+        HIGH_BUCKET(10000); //5800
 
         public final int position;
 
@@ -92,14 +95,16 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        positions.setSelected(0);
+        //positions.setSelected(0);
         controller = new PIDController(p, i, d);
         register();
     }
 
     @Override
     public void periodic() {
-        int target = (Config.MODE != SlideMode.MANUAL) ? positions.getSelected().position : Config.target;
+        if(!startFlag) return;
+
+        int target = (Config.MODE != SlideMode.MANUAL) ? positions.getSelected().position : CONFIG.target;
 
         controller.setPID(p, i, d);
         int armPos = leftSlide.getCurrentPosition();
@@ -111,7 +116,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
     @Override
     public void updateTelemetry(TelemetryEx telemetry) {
-        int target = (Config.MODE != SlideMode.MANUAL) ? positions.getSelected().position : Config.target;
+        int target = (Config.MODE != SlideMode.MANUAL) ? positions.getSelected().position : CONFIG.target;
 
         telemetry.print("Target", target);
         telemetry.print(String.format(Locale.CANADA, "Left Slide Pos: %d | Right Slide Pos: %d",
