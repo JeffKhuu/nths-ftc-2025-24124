@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -68,8 +69,8 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.A, wrist.toggle())
                 .bind(GamepadKeys.Button.BACK, wrist.setPositionTo(NewMotorWrist.WristState.HOME))
                 .bind(GamepadKeys.Button.START, new InstantCommand(() -> {
-                    wrist.setPositionTo(NewMotorWrist.WristState.HOME);
                     slides.startFlag = true;
+                    CommandScheduler.getInstance().schedule(wrist.setPositionTo(NewMotorWrist.WristState.HOME));
                 }))
 
                 .build();

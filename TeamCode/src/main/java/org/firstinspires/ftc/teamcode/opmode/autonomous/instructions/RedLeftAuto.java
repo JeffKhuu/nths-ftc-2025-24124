@@ -65,6 +65,7 @@ public class RedLeftAuto extends AutoInstructions {
                 claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
                 wrist.moveTo(MotorWrist.WristState.ACTIVE.position),
+                new SleepAction(0.2),
                 claw.moveTo(Claw.ClawState.CLOSED),
                 new SleepAction(0.2),
                 wrist.moveTo(MotorWrist.WristState.INACTIVE.position),

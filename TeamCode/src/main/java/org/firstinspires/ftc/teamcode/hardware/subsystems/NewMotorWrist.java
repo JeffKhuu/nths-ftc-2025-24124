@@ -44,7 +44,7 @@ public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
     public enum WristState {
         HOME(-100),
         INACTIVE(-250),
-        ACTIVE(-550),
+        ACTIVE(-580),
         HANG(-400);
 
 
@@ -58,6 +58,7 @@ public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
 
     public static Params CONFIG = new Params();
     public final DcMotorEx wrist;
+    public boolean isActive; // True if the wrist is an "active" position
 
     public NewMotorWrist(HardwareMap hardwareMap) {
         wrist = hardwareMap.get(DcMotorEx.class, CONFIG.MOTOR_NAME);
@@ -133,6 +134,7 @@ public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
             wrist.wrist.setTargetPosition(position);
             wrist.wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wrist.wrist.setPower(0.5);
+            wrist.isActive = true;
         }
 
         @Override
@@ -152,14 +154,10 @@ public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
 
         @Override
         public void initialize() {
-            if (wrist.wrist.getCurrentPosition() != WristState.ACTIVE.position) {
-                wrist.wrist.setTargetPosition(WristState.ACTIVE.position);
-            } else {
-                wrist.wrist.setTargetPosition(WristState.INACTIVE.position);
-            }
-
+            wrist.wrist.setTargetPosition(wrist.isActive ? WristState.INACTIVE.position : WristState.ACTIVE.position);
             wrist.wrist.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             wrist.wrist.setPower(0.5);
+            wrist.isActive = !wrist.isActive;
         }
 
         @Override
