@@ -12,10 +12,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryMaster;
@@ -29,7 +28,7 @@ public class Main extends OpMode {
     private DriveTrain driveTrain;
     private Slide slides;
     private Claw claw;
-    private MotorWrist wrist;
+    private NewMotorWrist wrist;
 
     private TelemetryEx telemetryEx;
     private TelemetryMaster telemetryMaster;
@@ -42,7 +41,7 @@ public class Main extends OpMode {
         driveTrain = new RobotCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose());
         slides = new Slide(hardwareMap);
         claw = new Claw(hardwareMap);
-        wrist = new MotorWrist(hardwareMap);
+        wrist = new NewMotorWrist(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         //endregion
 
@@ -52,21 +51,6 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::next))
                 .bind(GamepadKeys.Button.START, new InstantCommand((driveTrain::resetHeading)))
 
-                // Slides
-                .bind(GamepadKeys.Button.DPAD_UP, new InstantCommand(slides.positions::next))
-                .bind(GamepadKeys.Button.DPAD_DOWN, new InstantCommand(slides.positions::previous))
-                .bind(GamepadKeys.Button.DPAD_RIGHT, new InstantCommand(() -> slides.positions.setSelected(8))) // Move the slides to the 7th position
-                .bind(GamepadKeys.Button.DPAD_LEFT, new InstantCommand(() -> slides.positions.setSelected(1)))
-
-                // Claw
-                .bind(GamepadKeys.Button.X, claw.toggle())
-
-                // Wrist
-                .bind(GamepadKeys.Button.A, wrist.toggle())
-                .bind(GamepadKeys.Button.BACK, new InstantCommand(() -> wrist.positions.setSelected(0)))
-                .bind(GamepadKeys.Button.START, new InstantCommand(() -> {
-                    wrist.startFlag = slides.startFlag = true;
-                }))
 
                 .build();
 
@@ -82,15 +66,18 @@ public class Main extends OpMode {
 
                 // Wrist
                 .bind(GamepadKeys.Button.A, wrist.toggle())
-                .bind(GamepadKeys.Button.Y, new InstantCommand(() -> wrist.positions.setSelected(3)))
-                .bind(GamepadKeys.Button.BACK, new InstantCommand(() -> wrist.positions.setSelected(0)))
+                .bind(GamepadKeys.Button.BACK, wrist.setPositionTo(NewMotorWrist.WristState.HOME))
+                .bind(GamepadKeys.Button.START, new InstantCommand(() -> {
+                    wrist.setPositionTo(NewMotorWrist.WristState.HOME);
+                    slides.startFlag = true;
+                }))
 
                 .build();
 
 
         //region Setup Extended Telemetry
         telemetryEx = new TelemetryEx(telemetry);
-        telemetryMaster = new TelemetryMaster(telemetryEx); // fixme: May break things, idk
+        telemetryMaster = new TelemetryMaster(telemetryEx);
         telemetryMaster.subscribe(driveTrain)
                 .subscribe(wrist)
                 .subscribe(claw)
@@ -103,7 +90,6 @@ public class Main extends OpMode {
     @Override
     public void loop() {
         CommandScheduler.getInstance().run();
-
 
 
         double x = driver.getLeftX();
