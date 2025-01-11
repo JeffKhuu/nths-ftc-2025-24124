@@ -49,7 +49,7 @@ public class RedLeftAuto extends AutoInstructions {
 
                 // Hang Preloaded Specimen
                 new ParallelAction(
-                        wrist.moveTo(-170),
+                        wrist.moveTo(MotorWrist.WristState.INACTIVE.position),
                         slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position),
                         driveTrain.strafeTo(-12, -37)
                 ),
@@ -62,10 +62,9 @@ public class RedLeftAuto extends AutoInstructions {
                         driveTrain.strafeTo(-50, -41),
                         slides.moveTo(Slide.SlideState.HOME.position)
                 ),
-                claw.moveTo(Claw.ClawState.OPEN),
-                new SleepAction(0.2),
                 wrist.moveTo(MotorWrist.WristState.ACTIVE.position),
-                new SleepAction(0.2),
+                claw.moveTo(Claw.ClawState.OPEN),
+                new SleepAction(0.5),
                 claw.moveTo(Claw.ClawState.CLOSED),
                 new SleepAction(0.2),
                 wrist.moveTo(MotorWrist.WristState.INACTIVE.position),
@@ -81,8 +80,8 @@ public class RedLeftAuto extends AutoInstructions {
 
                 claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
-                wrist.moveTo(MotorWrist.WristState.INACTIVE.position+50),
-                new SleepAction(0.2),
+                wrist.moveTo(MotorWrist.WristState.HOME.position),
+                new SleepAction(0.4),
 
                 // Pick Up Sample
                 new ParallelAction(
@@ -98,7 +97,7 @@ public class RedLeftAuto extends AutoInstructions {
 
                 wrist.moveTo(MotorWrist.WristState.ACTIVE.position),
                 claw.moveTo(Claw.ClawState.OPEN),
-                new SleepAction(0.2),
+                new SleepAction(0.5),
                 claw.moveTo(Claw.ClawState.CLOSED),
                 new SleepAction(0.2),
                 wrist.moveTo(MotorWrist.WristState.INACTIVE.position),
@@ -114,15 +113,14 @@ public class RedLeftAuto extends AutoInstructions {
 
                 claw.moveTo(Claw.ClawState.OPEN),
                 new SleepAction(0.2),
-                wrist.moveTo(MotorWrist.WristState.INACTIVE.position+50),
-                new SleepAction(0.2),
+                wrist.moveTo(MotorWrist.WristState.HOME.position),
+                new SleepAction(0.4),
 
 
                 // Reset for TeleOp
                 new ParallelAction(
                         driveTrain.turnTo(0),
                         slides.moveTo(Slide.SlideState.HOME.position),
-                        wrist.moveTo(MotorWrist.WristState.HOME.position),
                         claw.moveTo(Claw.ClawState.CLOSED)
                 )
         ));

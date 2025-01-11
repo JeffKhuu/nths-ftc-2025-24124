@@ -61,6 +61,9 @@ public class Main extends OpMode {
                 .bind(GamepadKeys.Button.DPAD_DOWN, new InstantCommand(slides.positions::previous))
                 .bind(GamepadKeys.Button.DPAD_RIGHT, new InstantCommand(() -> slides.positions.setSelected(8))) // Move the slides to the 7th position
                 .bind(GamepadKeys.Button.DPAD_LEFT, new InstantCommand(() -> slides.positions.setSelected(1)))
+                .bind(GamepadKeys.Button.Y, new InstantCommand(() -> {
+                    slides.stopAndResetEncoders();
+                }))
 
                 // Claw
                 .bind(GamepadKeys.Button.X, claw.toggle())

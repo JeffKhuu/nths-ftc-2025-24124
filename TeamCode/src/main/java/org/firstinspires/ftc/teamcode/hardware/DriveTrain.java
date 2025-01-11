@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.utilities.selectors.ArraySelect;
 import org.firstinspires.ftc.teamcode.utilities.selectors.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
@@ -20,8 +21,8 @@ import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
  */
 public abstract class DriveTrain extends SubsystemBase implements TelemetrySubject {
     public final MecanumDrive mecanumDrive; // Roadrunner-Based mecanum drive
-    public final CarouselSelect<Double> speeds = new CarouselSelect<>(
-            new Double[]{1.0, 0.5} // Speed multipliers
+    public final ArraySelect<Double> speeds = new ArraySelect<>(
+            new Double[]{0.5, 1.0} // Speed multipliers
     );
 
     public double botHeading; // Angle (in radians) the robot is facing
@@ -114,4 +115,6 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
                 .turnTo(Math.toRadians(angle))
                 .build();
     }
+
+
 }
