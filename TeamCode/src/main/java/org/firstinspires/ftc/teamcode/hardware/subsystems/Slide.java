@@ -21,6 +21,7 @@ import java.util.Locale;
 
 /**
  * Two motor viper-slide based slide subsystem
+ *
  * @version 1.0.0
  */
 @Config
@@ -72,6 +73,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
             this.position = position;
         }
     }
+
     public enum SlideMode {
         MANUAL,
         CONTROLLED
@@ -102,7 +104,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
     @Override
     public void periodic() {
-        if(!startFlag) return;
+        if (!startFlag) return;
 
         int target = (Config.MODE != SlideMode.MANUAL) ? positions.getSelected().position : CONFIG.target;
 
@@ -123,13 +125,14 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
                 leftSlide.getCurrentPosition(), rightSlide.getCurrentPosition()));
         telemetry.print(Config.coefficients.toString());
 
-        if(positions.getSelected().position != 0){
+        if (positions.getSelected().position != 0) {
             telemetry.print("Error", Utilities.calculateErr(target, leftSlide.getCurrentPosition()));
         }
     }
 
     /**
      * Move the slides to a given target position as a RaodRunner action.
+     *
      * @param target Target position in encoder ticks for the slides to travel to
      * @return A RoadRunner Action
      */
@@ -138,6 +141,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
             int slidePos = leftSlide.getCurrentPosition();
             double tolerance = 0.01 * target + 1; // Check if we are within 1% of the target, with a constant of 1
 
+            // FTCDashboard Telemetry
             packet.put("Position", slidePos);
             packet.put("Target", target);
             packet.put("Position Reached?", Utilities.isBetween(slidePos, target - tolerance, target + tolerance));
@@ -151,9 +155,9 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
             if (Utilities.isBetween(slidePos, target - tolerance, target + tolerance)) {
                 setPower(f);
-                return false;
+                return false; // Stop the command
             } else {
-                return true;
+                return true; // Otherwise continue running it
             }
         };
     }
@@ -161,6 +165,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Set the power of both motors driving the slides given a power
+     *
      * @param power Power to give to the motors
      */
     public void setPower(double power) {
@@ -168,7 +173,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         leftSlide.setPower(power);
     }
 
-    public void stopAndResetEncoders(){
+    public void stopAndResetEncoders() {
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
