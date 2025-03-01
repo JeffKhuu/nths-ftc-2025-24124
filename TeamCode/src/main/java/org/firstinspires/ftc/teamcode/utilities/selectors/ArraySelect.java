@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode.utilities.selectors;
  *
  * @param <T> Type of object inside the carousel.
  */
-public class ArraySelect<T> {
+public class ArraySelect<T> implements Selector<T> {
     /*
         CarouselSelect representation for array of size four
         -----------------------------------------------------------------------------------
@@ -69,17 +69,17 @@ public class ArraySelect<T> {
      * @return Returns the CarouselSelect object. Useful for chaining methods.
      */
     public ArraySelect<T> moveSelection(int amount) {
-        if(currentIndex + amount >= 0 && currentIndex + amount < options.length){
+        if (currentIndex + amount >= 0 && currentIndex + amount < options.length) {
             currentIndex += amount;
-        }else if(currentIndex + amount < 0 ){
+        } else if (currentIndex + amount < 0) {
             currentIndex = 0;
-        }else if(currentIndex + amount >= options.length){
-            currentIndex = options.length-1;
+        } else if (currentIndex + amount >= options.length) {
+            currentIndex = options.length - 1;
         }
         return this;
     }
 
-    public void setSelected(int index){
+    public void setSelected(int index) {
         currentIndex = index;
     }
 

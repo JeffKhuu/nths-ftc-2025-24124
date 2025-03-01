@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.utilities.selectors;
 
-public class ToggleSelect<T> {
+public class ToggleSelect<T> implements Selector<T> {
 
     private T selected;
     private final T primary;
@@ -18,5 +18,13 @@ public class ToggleSelect<T> {
 
     public T getSelected() {
         return selected;
+    }
+
+    @Override
+    public T[] getAllOptions() {
+        @SuppressWarnings("unchecked")
+        T[] options = (T[]) new Object[]{primary, secondary};
+
+        return options;
     }
 }
