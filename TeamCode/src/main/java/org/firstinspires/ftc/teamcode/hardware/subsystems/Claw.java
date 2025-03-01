@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utilities.CommandAction;
+import org.firstinspires.ftc.teamcode.utilities.selectors.ArraySelect;
+import org.firstinspires.ftc.teamcode.utilities.selectors.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
@@ -19,14 +21,15 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
     public static final class Config {
         // Device name to retrieve from hardwareMap
         public static final String CLAW_NAME = "claw";
+        public static final String WRIST_NAME = "wrist2";
 
         // Default starting position of the claw
         public static ClawState start = ClawState.CLOSED;
     }
 
     public enum ClawState { // Accepts values between 0.5 and 1.0
-        OPEN(0.60),
-        CLOSED(1.0);
+        OPEN(0),
+        CLOSED(0.5);
 
         public final double position;
 
@@ -35,12 +38,37 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         }
     }
 
+    public enum WristState {
+        THIRTY(0),
+        SIXTY(0.1),
+        NINETY(0.2),
+        ONETWENTY(0.3),
+        ONEFIFTY(0.4),
+        ONEEIGHTY(0.5),
+        TWOTEN(0.6),
+        TWOFORTY(0.7),
+        TWOSEVENTY(0.8),
+        THREEHUNDRED(1);
+
+        public final double position;
+        WristState(double position){this.position = position; }
+    }
+
+
+
     public Servo claw;
+    public Servo wrist;
     public boolean isClawOpen;
+
+    ArraySelect<WristState> pivots = new ArraySelect<>(WristState.values());
 
     public Claw(HardwareMap hardwareMap) {
         claw = hardwareMap.get(Servo.class, Config.CLAW_NAME);
+        wrist = hardwareMap.get(Servo.class, Config.WRIST_NAME);
+
         claw.setPosition(Config.start.position);
+        wrist.setPosition(WristState.ONEEIGHTY.position);
+        pivots.setSelected(5);
         isClawOpen = false;
     }
 
@@ -57,6 +85,18 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
      */
     public Action moveTo(ClawState state) {
         return new CommandAction(setTo(state));
+    }
+
+    public Action moveWrist(WristState state){
+        return new CommandAction(setWristTo(state));
+    }
+
+    public Command setWristTo(WristState state){
+        return new MoveWrist(state, this);
+    }
+
+    public Command moveWrist(int amount) {
+        return new PivotWrist(this, amount);
     }
 
     /**
@@ -108,6 +148,66 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
             return true;
         }
     }
+
+    /**
+     * FTCLib command that moves the wrist to  wrist state or position.
+     * Uses the {@link Claw} Subsystem
+     */
+    public static class PivotWrist extends CommandBase {
+        Claw claw;
+        int amount;
+
+        public PivotWrist(Claw subsystem) {
+            claw = subsystem;
+            amount = 1;
+            addRequirements(subsystem);
+        }
+
+        public PivotWrist(Claw subsystem, int amount) {
+            claw = subsystem;
+            this.amount = amount;
+            addRequirements(subsystem);
+        }
+
+
+        @Override
+        public void execute() {
+            claw.pivots.moveSelection(amount);
+            claw.wrist.setPosition(claw.pivots.getSelected().position);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
+    }
+
+    /**
+     * FTCLib command that moves the wrist to  wrist state or position.
+     * Uses the {@link Claw} Subsystem
+     */
+    public static class MoveWrist extends CommandBase {
+        Claw claw;
+        WristState state;
+
+        public MoveWrist(WristState state, Claw subsystem) {
+            claw = subsystem;
+            this.state = state;
+            addRequirements(subsystem);
+        }
+
+        @Override
+        public void execute() {
+            claw.pivots.next();
+            claw.wrist.setPosition(state.position);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
+    }
+
 
     /**
      * FTCLib command that moves the claw to a specified claw state or position.

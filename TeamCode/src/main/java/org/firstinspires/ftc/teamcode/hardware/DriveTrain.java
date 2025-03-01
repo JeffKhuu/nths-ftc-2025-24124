@@ -2,13 +2,17 @@ package org.firstinspires.ftc.teamcode.hardware;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
+import org.firstinspires.ftc.teamcode.utilities.Utilities;
 import org.firstinspires.ftc.teamcode.utilities.selectors.ArraySelect;
 import org.firstinspires.ftc.teamcode.utilities.selectors.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
@@ -83,6 +87,9 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     public void updateTelemetry(TelemetryEx telemetry) {
         telemetry.print("Speed", speeds.getSelected());
         telemetry.print("Heading", botHeading);
+
+        telemetry.print("Position (x)", mecanumDrive.pose.position.x);
+        telemetry.print("Position (y)", mecanumDrive.pose.position.y);
     }
 
     /**
@@ -99,6 +106,43 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
         return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
                 .strafeTo(new Vector2d(x, y))
                 .build();
+    }
+
+    /**
+     * Strafe the robot to a set of given coordinates using the RoadRunner drive train
+     *
+     * @param x x coordinate to strafe to
+     * @param y y coordinate to strafe to
+     * @param accel Acceleration Constraint
+     * @param vel Velocity Constraint
+     * @return RoadRunner Action
+     */
+    public Action strafeTo(double x, double y, ProfileAccelConstraint accel, VelConstraint vel) {
+        Pose2d lastPose = FieldConstants.getLastSavedPose();
+        FieldConstants.savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
+
+        return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
+                .strafeTo(new Vector2d(x, y), vel, accel)
+                .build();
+    }
+
+    /**
+     * Strafe the robot to a set of given coordinates using the RoadRunner drive train
+     *
+     * @param x x coordinate to strafe to
+     * @param y y coordinate to strafe to
+     * @param heading heading to rotate to (in degrees)
+     * @return RoadRunner Action
+     */
+    public Action strafeTo(double x, double y, int heading) {
+        Pose2d lastPose = FieldConstants.getLastSavedPose();
+
+        FieldConstants.savePose(new Pose2d(x, y, Math.toRadians(heading)));
+        return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
+                .strafeToLinearHeading(new Vector2d(x, y), Math.toRadians(heading), new TranslationalVelConstraint(300))
+                .build();
+
+
     }
 
     /**

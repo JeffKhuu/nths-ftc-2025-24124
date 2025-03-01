@@ -31,6 +31,19 @@ public class ControllerEx extends GamepadEx {
             controller.getGamepadButton(button).whenPressed(command);
             return this;
         }
+        public ControllerBuilder bind(GamepadKeys.Button button, GamepadKeys.Button button2, Command command) {
+            controller.getGamepadButton(button)
+                    .and(controller.getGamepadButton(button2))
+                    .whenActive(command);
+            return this;
+        }
+
+        public ControllerBuilder toggle(GamepadKeys.Button button, GamepadKeys.Button button2, Command command) {
+            controller.getGamepadButton(button)
+                    .and(controller.getGamepadButton(button2))
+                    .toggleWhenActive(command);
+            return this;
+        }
 
         public ControllerBuilder bindWhileHeld(GamepadKeys.Button button, Command command) {
             controller.getGamepadButton(button).whileHeld(command);
@@ -46,6 +59,8 @@ public class ControllerEx extends GamepadEx {
             controller.getGamepadButton(button).whenReleased(command);
             return this;
         }
+
+
 
         public ControllerEx build() {
             return controller;

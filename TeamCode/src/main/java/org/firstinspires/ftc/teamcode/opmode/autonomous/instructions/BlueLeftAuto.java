@@ -2,15 +2,21 @@ package org.firstinspires.ftc.teamcode.opmode.autonomous.instructions;
 
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.PushMechanism;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
@@ -19,7 +25,10 @@ import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 public class BlueLeftAuto extends AutoInstructions {
 
     // Instantiate subsystems
-    public static Pose2d startPose = new Pose2d(new Vector2d(-12, -64), Math.toRadians(90));
+    public static Pose2d startPose = new Pose2d(new Vector2d(12, -64), Math.toRadians(90));
+
+    ProfileAccelConstraint highAcc = new ProfileAccelConstraint(-30, 70);
+    VelConstraint highSpeed = new TranslationalVelConstraint(70);
 
 //    SequentialAction depositSample = new SequentialAction(
 //            driveTrain.strafeTo(-57, -56),  // Deposit Sample
@@ -44,80 +53,77 @@ public class BlueLeftAuto extends AutoInstructions {
     @Override
     public void execute() {
         Actions.runBlocking(new SequentialAction(
-                claw.moveTo(Claw.ClawState.CLOSED),
-                wrist.moveTo(MotorWrist.WristState.INACTIVE.position),
-
                 // Hang Preloaded Specimen
                 new ParallelAction(
-                        wrist.moveTo(-100),
-                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position),
-                        driveTrain.strafeTo(12, -37)
+                        wrist.moveTo(NewMotorWrist.WristState.HOME.position-50),
+                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-500),
+                        driveTrain.strafeTo(4, -37, highAcc, highSpeed)
                 ),
-                driveTrain.strafeTo(12, -34),
-                slides.moveTo(Slide.SlideState.CLIP_HANG.position),
-                driveTrain.strafeTo(34, -50),
+                driveTrain.strafeTo(4, -32, highAcc, highSpeed),
+                slides.moveTo(5000),
+                driveTrain.strafeTo(4, -40),
 
-                // Pick Up Sample
-                new ParallelAction(
-                        driveTrain.strafeTo(-50, -41),
-                        slides.moveTo(Slide.SlideState.ACTIVE.position)
-                ),
-                claw.moveTo(Claw.ClawState.OPEN),
-                new SleepAction(0.2),
-                wrist.moveTo(MotorWrist.WristState.ACTIVE.position),
-                new SleepAction(0.4),
-                claw.moveTo(Claw.ClawState.CLOSED),
-                new SleepAction(0.2),
-                wrist.moveTo(MotorWrist.WristState.INACTIVE.position),
+                // Push 2 Samples into Observation Station
+                driveTrain.strafeTo(34, -33, 75),
+                pusher.moveTo(PushMechanism.PushState.ACTIVE),
+                new SleepAction(0.1),
+                driveTrain.strafeTo(44, -60, 0),
 
-                // Deposit Sample
-                driveTrain.turnTo(225),
                 new ParallelAction(
-                        driveTrain.strafeTo(-57, -56),
-                        slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
-                driveTrain.strafeTo(-59.2, -59.4),
-                claw.moveTo(Claw.ClawState.OPEN),
-                new SleepAction(0.2),
-                driveTrain.strafeTo(-57, -57), // FIXME REMOVE THIS IF AUTO STOPS WORKING
-                new SleepAction(0.2),
-
-                // Pick Up Sample
-                driveTrain.turnTo(90),
-                new SleepAction(0.2),
-                new ParallelAction(
-                        driveTrain.strafeTo(-60, -40),
-                        slides.moveTo(Slide.SlideState.ACTIVE.position)),
-                claw.moveTo(Claw.ClawState.OPEN),
-                new SleepAction(0.2),
-                wrist.moveTo(MotorWrist.WristState.ACTIVE.position),
-                new SleepAction(0.4),
-                claw.moveTo(Claw.ClawState.CLOSED),
-                new SleepAction(0.2),
-                wrist.moveTo(MotorWrist.WristState.INACTIVE.position),
-
-                // Deposit Sample
-                driveTrain.turnTo(225),
-                new ParallelAction(
-                        driveTrain.strafeTo(-60, -56),
-                        slides.moveTo(Slide.SlideState.HIGH_BUCKET.position)),
-                driveTrain.strafeTo(-59.5, -59.5),
-                claw.moveTo(Claw.ClawState.OPEN),
-                new SleepAction(0.2),
-
-                // Park in the ascent zone
-                new ParallelAction(
-                        slides.moveTo(Slide.SlideState.HOME.position),
+                        slides.moveTo(Slide.SlideState.CLIPPER.position),
                         new SequentialAction(
-                                new ParallelAction(
-                                        driveTrain.turnTo(0),
-                                        wrist.moveTo(MotorWrist.WristState.HOME.position),
-                                        claw.moveTo(Claw.ClawState.CLOSED)
-                                ),
-                                driveTrain.strafeTo(-40, -15)
+                                //Push Second Sample
+                                pusher.moveTo(PushMechanism.PushState.INACTIVE),
+                                driveTrain.strafeTo(42, -30, 75),
+                                pusher.moveTo(PushMechanism.PushState.ACTIVE),
+                                new SleepAction(0.1),
+                                driveTrain.strafeTo(54, -63, 0),
+                                pusher.moveTo(PushMechanism.PushState.INACTIVE),
+
+                                // Retrieve Specimen from Observation Station
+                                driveTrain.strafeTo(60, -58),
+                                driveTrain.strafeTo(63, -58)
                         )
-                )
+                ),
 
 
+                // Deposit Specimen on High Chamber
+                new ParallelAction(
+                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position),
+                        driveTrain.strafeTo(6, -36, 90)
+                ),
+                driveTrain.strafeTo(6, -33),
+                slides.moveTo(5000),
+
+                // Retrieve Specimen from Observation Station
+                new ParallelAction(
+                        slides.moveTo(Slide.SlideState.CLIPPER.position),
+                        new SequentialAction(
+                                driveTrain.strafeTo(40, -64, 271)
+                        )
+                ),
+
+                // Deposit Specimen on High Chamber
+                new ParallelAction(
+                        driveTrain.strafeTo(8, -36, 90),
+                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position)
+                ),
+                driveTrain.strafeTo(8, -33),
+                slides.moveTo(5000),
+
+                // Retrieve Specimen from Observation Station
+                new ParallelAction(
+                        slides.moveTo(Slide.SlideState.CLIPPER.position),
+                        driveTrain.strafeTo(40, -64, 271)
+                ),
+
+                // Deposit Specimen on High Chamber
+                new ParallelAction(
+                        driveTrain.strafeTo(10, -36, 90),
+                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position)
+                ),
+                driveTrain.strafeTo(10, -33),
+                slides.moveTo(5000)
 
         ));
     }

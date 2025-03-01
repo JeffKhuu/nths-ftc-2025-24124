@@ -6,7 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.PushMechanism;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
@@ -15,9 +17,10 @@ import org.firstinspires.ftc.teamcode.utilities.pathfinding.Pathfinder;
 public abstract class AutoInstructions {
     LinearOpMode opMode;
     public DriveTrain driveTrain;
-    public Claw claw;
+    public Claw intake;
     public Slide slides;
     public NewMotorWrist wrist;
+    public PushMechanism pusher;
     Pathfinder pathfinder;
 
     public AutoInstructions(LinearOpMode opMode, Pose2d startPose) {
@@ -25,9 +28,10 @@ public abstract class AutoInstructions {
         // Create all subsystems that can be used in autonomous instructions
         // IMPORTANT: Make sure to unregister subsystesms in AutoOpMode.java
         driveTrain = new RobotCentricDriveTrain(opMode.hardwareMap, startPose);
-        claw = new Claw(opMode.hardwareMap);
+        intake = new Claw(opMode.hardwareMap);
         slides = new Slide(opMode.hardwareMap);
         wrist = new NewMotorWrist(opMode.hardwareMap);
+        pusher = new PushMechanism(opMode.hardwareMap);
 
         opMode.telemetry.addData("Systems", "Initialized");
         opMode.telemetry.update();

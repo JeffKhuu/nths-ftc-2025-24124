@@ -12,6 +12,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
@@ -20,13 +22,13 @@ import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 @TeleOp(name = "StrafeDebugger", group = "ඞ")
 public class StrafeDebugger extends LinearOpMode {
     DriveTrain driveTrain = null;
-    Wrist wrist = null;
-    Claw claw = null;
+    NewMotorWrist wrist = null;
+    Intake intake = null;
     Slide slide = null;
 
     public static double startX = 0;
     public static double startY = 0;
-    public static double startHeading = Math.toRadians(90);
+    public static double startHeading = 90;
 
     public static double x = startX;
     public static double y = startY;
@@ -36,9 +38,9 @@ public class StrafeDebugger extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        driveTrain = new RobotCentricDriveTrain(hardwareMap, new Pose2d(startX, startY, startHeading));
-        wrist = new Wrist(hardwareMap);
-        claw = new Claw(hardwareMap);
+        driveTrain = new RobotCentricDriveTrain(hardwareMap, new Pose2d(startX, startY, Math.toRadians(startHeading)));
+        wrist = new NewMotorWrist(hardwareMap);
+        intake = new Intake(hardwareMap);
         slide = new Slide(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -48,20 +50,8 @@ public class StrafeDebugger extends LinearOpMode {
         while (opModeIsActive()) {
             if (!FieldConstants.getLastSavedPose().position.equals(new Vector2d(x, y))) {
                 Actions.runBlocking(driveTrain.strafeTo(x, y));
-            } else if (FieldConstants.getLastSavedPose().heading.toDouble() != heading) {
-                Actions.runBlocking(driveTrain.turnTo(heading));
-            }
-
-            if(clawOpen){
-                Actions.runBlocking(claw.moveTo(Claw.ClawState.OPEN));
-            }else{
-                Actions.runBlocking(claw.moveTo(Claw.ClawState.CLOSED));
-            }
-
-            if(armActive){
-                Actions.runBlocking(wrist.moveTo(Wrist.WristState.ACTIVE));
-            }else{
-                Actions.runBlocking(wrist.moveTo(Wrist.WristState.INACTIVE));
+            } else if (FieldConstants.getLastSavedPose().heading.toDouble() != Math.toRadians(heading)) {
+                Actions.runBlocking(driveTrain.turnTo(Math.toRadians(heading)));
             }
 
         }

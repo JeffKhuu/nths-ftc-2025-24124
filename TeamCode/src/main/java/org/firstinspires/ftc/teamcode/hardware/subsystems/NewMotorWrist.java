@@ -27,13 +27,6 @@ public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
         public int target = 0; // Debugging variable used for MANUAL mode
 
         private final String MOTOR_NAME = "wrist";
-
-        public PIDFCoefficients pidf = new PIDFCoefficients(
-                0.0022,
-                0.005,
-                0.0000,
-                0.020
-        );
     }
 
     public enum WristMode {
@@ -42,9 +35,9 @@ public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
     }
 
     public enum WristState {
-        HOME(-100),
-        INACTIVE(-250),
-        ACTIVE(-580),
+        HOME(0),
+        INACTIVE(-150),
+        ACTIVE(-480),
         HANG(-400);
 
 

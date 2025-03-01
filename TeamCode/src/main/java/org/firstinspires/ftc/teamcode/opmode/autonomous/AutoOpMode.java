@@ -56,7 +56,7 @@ public class AutoOpMode extends LinearOpMode {
         CommandScheduler.getInstance().unregisterSubsystem(auto.driveTrain);
         CommandScheduler.getInstance().unregisterSubsystem(auto.slides);
         CommandScheduler.getInstance().unregisterSubsystem(auto.wrist);
-        CommandScheduler.getInstance().unregisterSubsystem(auto.claw);
+        CommandScheduler.getInstance().unregisterSubsystem(auto.intake);
     }
 
 

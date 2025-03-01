@@ -43,7 +43,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
                 0.00945,
                 0,
                 0.0001,
-                0
+                0.01
         );
     }
 
@@ -58,15 +58,17 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
     public enum SlideState {
         HOME(0),
         ACTIVE(500), // 380
-        HOVER(1000), // 760
-        CLIPPER(1500), //1000
-        HANG(2650), // 1700
+        //INBETWEEN(800),
+        //HOVER(1200), // 760
+        CLIPPER(1650), //1000
+        //HANG(2650), // 1700
         HIGH_RUNG(3700), // 2000
-        CLIP_HANG(5000), //3200
+        //CLIP_HANG(5000), //3200
         CLIP_HIGH_CHAMBER(7000), // 4000
         HIGH_BUCKET(10000); //5800
 
         public final int position;
+        public static final int MAX = SlideState.values().length - 1;
 
         SlideState(int position) {
             this.position = position;
@@ -82,6 +84,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
     // Create a selection array from all SlideState values
     public final ArraySelect<SlideState> positions = new ArraySelect<>(SlideState.values());
+
 
     public Slide(HardwareMap hardwareMap) {
         leftSlide = hardwareMap.get(DcMotorEx.class, Config.LEFT_MOTOR_NAME); // Retrieve device names from Config
@@ -136,7 +139,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
     public Action moveTo(int target) {
         return (TelemetryPacket packet) -> {
             int slidePos = leftSlide.getCurrentPosition();
-            double tolerance = 0.01 * target + 1; // Check if we are within 1% of the target, with a constant of 1
+            double tolerance = 0.01 * target + 10; // Check if we are within 1% of the target, with a constant of 1
 
             packet.put("Position", slidePos);
             packet.put("Target", target);
