@@ -9,23 +9,21 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utilities.CommandAction;
 import org.firstinspires.ftc.teamcode.utilities.selectors.ArraySelect;
-import org.firstinspires.ftc.teamcode.utilities.selectors.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
 /**
  * One servo based claw system
- * @version 1.0.0
+ *
+ * @version 1.0.1
  */
 public class Claw extends SubsystemBase implements TelemetrySubject {
-    public static final class Config {
-        // Device name to retrieve from hardwareMap
-        public static final String CLAW_NAME = "claw";
-        public static final String WRIST_NAME = "wrist2";
+    // Device name to retrieve from hardwareMap
+    private static final String CLAW_NAME = "claw";
+    private static final String WRIST_NAME = "wrist2";
 
-        // Default starting position of the claw
-        public static ClawState start = ClawState.CLOSED;
-    }
+    // Default starting position of the claw
+    private static final ClawState START = ClawState.CLOSED;
 
     public enum ClawState { // Accepts values between 0.5 and 1.0
         OPEN(0),
@@ -51,9 +49,11 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         THREEHUNDRED(1);
 
         public final double position;
-        WristState(double position){this.position = position; }
-    }
 
+        WristState(double position) {
+            this.position = position;
+        }
+    }
 
 
     public Servo claw;
@@ -63,10 +63,10 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
     ArraySelect<WristState> pivots = new ArraySelect<>(WristState.values());
 
     public Claw(HardwareMap hardwareMap) {
-        claw = hardwareMap.get(Servo.class, Config.CLAW_NAME);
-        wrist = hardwareMap.get(Servo.class, Config.WRIST_NAME);
+        claw = hardwareMap.get(Servo.class, CLAW_NAME);
+        wrist = hardwareMap.get(Servo.class, WRIST_NAME);
 
-        claw.setPosition(Config.start.position);
+        claw.setPosition(START.position);
         wrist.setPosition(WristState.ONEEIGHTY.position);
         pivots.setSelected(5);
         isClawOpen = false;
@@ -80,6 +80,7 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Move the claw to a certain position given a ClawState to move to.
+     *
      * @param state A valid ClawState
      * @return A RoadRunner Action.
      */
@@ -87,11 +88,11 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
         return new CommandAction(setTo(state));
     }
 
-    public Action moveWrist(WristState state){
+    public Action moveWrist(WristState state) {
         return new CommandAction(setWristTo(state));
     }
 
-    public Command setWristTo(WristState state){
+    public Command setWristTo(WristState state) {
         return new MoveWrist(state, this);
     }
 
@@ -101,6 +102,7 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Set the position of a claw to a given ClawState.
+     *
      * @param state A valid ClawState
      * @return A FTCLib Command
      */
@@ -110,6 +112,7 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Set the position of a claw to a given position between 0.0-1.0
+     *
      * @param position A double between 0.0 -> 1.0
      * @return A FTCLib Command
      */
@@ -119,6 +122,7 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Toggle the position of the claw between open and closed positions
+     *
      * @return A FTCLib Command
      */
     public Command toggle() {

@@ -11,12 +11,10 @@ import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist.WristState;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.PushMechanism;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.AutoInstructions;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
 @AutonomousEx(preload = 0, cycles = 0)
@@ -26,7 +24,7 @@ public class RedRightAuto extends AutoInstructions {
     ProfileAccelConstraint highAcc = new ProfileAccelConstraint(-30, 70);
     VelConstraint highSpeed = new TranslationalVelConstraint(70);
 
-    RedRightAuto(LinearOpMode opMode) {
+    public RedRightAuto(LinearOpMode opMode) {
         super(opMode, startPose);
     }
 
@@ -43,7 +41,7 @@ public class RedRightAuto extends AutoInstructions {
         Actions.runBlocking(new SequentialAction(
                 // Hang Preloaded Specimen
                 new ParallelAction(
-                        wrist.moveTo(NewMotorWrist.WristState.HOME.position-50),
+                        wrist.moveTo(WristState.HOME.position - 50),
                         slides.moveTo(Slide.SlideState.HIGH_RUNG.position),
                         driveTrain.strafeTo(4, -37, highAcc, highSpeed)
                 ),
@@ -94,7 +92,7 @@ public class RedRightAuto extends AutoInstructions {
                         driveTrain.strafeTo(6, -34)
                 ),
 
-                
+
                 // Retrieve Specimen from Observation Station
                 new ParallelAction(
                         slides.moveTo(Slide.SlideState.CLIPPER.position),
@@ -135,7 +133,6 @@ public class RedRightAuto extends AutoInstructions {
                         slides.moveTo(Slide.SlideState.CLIPPER.position),
                         driveTrain.strafeTo(10, -34)
                 )
-
 
 
         ));

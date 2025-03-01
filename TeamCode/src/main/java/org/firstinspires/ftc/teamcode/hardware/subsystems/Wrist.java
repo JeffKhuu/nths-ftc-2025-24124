@@ -13,7 +13,9 @@ import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
 /**
  * Two servo based Wrist sysstem.
+ *
  * @version 1.0.0
+ * @deprecated Replaced with {@link NewMotorWrist}
  */
 public class Wrist extends SubsystemBase implements TelemetrySubject {
     //region Configs and Constants
@@ -63,15 +65,17 @@ public class Wrist extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Move the wrist to a certain position given a WristState to move to.
+     *
      * @param state A valid WristState
      * @return A RoadRunner Action.
      */
-    public Action moveTo(WristState state){ // Imperative
+    public Action moveTo(WristState state) { // Imperative
         return new CommandAction(setTo(state));
     }
 
     /**
      * Set the position of the wrist to a given position given a WristState to move to.
+     *
      * @param state A valid WristState
      * @return A FTCLib Command.
      */
@@ -81,6 +85,7 @@ public class Wrist extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Toggle the current position between ACTIVE and INACTIVE
+     *
      * @return A FTCLib COmmand.
      */
     public Command toggle() {
@@ -90,6 +95,7 @@ public class Wrist extends SubsystemBase implements TelemetrySubject {
     /**
      * Command that toggles the position of the wrist between two set positions
      * following the FTCLib command paradigm.
+     *
      * @see <a href="https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html">Commands in FRC</a>
      * @see <a href="https://docs.ftclib.org/ftclib/command-base/command-system">FTCLib Commands</a>
      */
@@ -117,6 +123,7 @@ public class Wrist extends SubsystemBase implements TelemetrySubject {
     /**
      * Command that sets the position of the wrist to a given position
      * following the FTCLib command paradigm.
+     *
      * @see <a href="https://docs.wpilib.org/en/stable/docs/software/commandbased/commands.html">Commands in FRC</a>
      * @see <a href="https://docs.ftclib.org/ftclib/command-base/command-system">FTCLib Commands</a>
      */

@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
+import org.firstinspires.ftc.teamcode.utilities.selectors.ArraySelect;
 
 public class FieldCentricDriveTrain extends DriveTrain {
 
@@ -23,6 +24,7 @@ public class FieldCentricDriveTrain extends DriveTrain {
         double rightPower = (rotY - rotX - turn) / normalize;
         double rightBackPower = (rotY + rotX - turn) / normalize;
 
+        ArraySelect<Double> speeds = getSpeeds();
         setDrivePower(leftPower * speeds.getSelected(),
                 leftBackPower * speeds.getSelected(),
                 rightPower * speeds.getSelected(),

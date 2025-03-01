@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode.autonomous.instructions;
+package org.firstinspires.ftc.teamcode.opmode.autonomous;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.PushMechanism;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
@@ -15,7 +14,7 @@ import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 import org.firstinspires.ftc.teamcode.utilities.pathfinding.Pathfinder;
 
 public abstract class AutoInstructions {
-    LinearOpMode opMode;
+    public LinearOpMode opMode;
     public DriveTrain driveTrain;
     public Claw intake;
     public Slide slides;

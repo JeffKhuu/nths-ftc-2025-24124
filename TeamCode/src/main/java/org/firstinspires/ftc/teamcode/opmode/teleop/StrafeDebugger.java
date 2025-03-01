@@ -12,18 +12,16 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
 
 @Config
 @TeleOp(name = "StrafeDebugger", group = "ඞ")
 public class StrafeDebugger extends LinearOpMode {
     DriveTrain driveTrain = null;
     NewMotorWrist wrist = null;
-    Intake intake = null;
+    Claw intake = null;
     Slide slide = null;
 
     public static double startX = 0;
@@ -40,7 +38,7 @@ public class StrafeDebugger extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         driveTrain = new RobotCentricDriveTrain(hardwareMap, new Pose2d(startX, startY, Math.toRadians(startHeading)));
         wrist = new NewMotorWrist(hardwareMap);
-        intake = new Intake(hardwareMap);
+        intake = new Claw(hardwareMap);
         slide = new Slide(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 

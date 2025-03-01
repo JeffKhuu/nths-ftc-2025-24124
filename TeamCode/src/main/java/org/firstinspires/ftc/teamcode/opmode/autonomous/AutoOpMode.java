@@ -7,8 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants.ALLIANCE;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants.START_POSITION;
-import org.firstinspires.ftc.teamcode.opmode.autonomous.instructions.AutoInstructions;
-import org.firstinspires.ftc.teamcode.opmode.autonomous.instructions.AutonomousFactory;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
 @Autonomous(name = "Auto OpMode", group = "ඞ", preselectTeleOp = "Main TeleOp")

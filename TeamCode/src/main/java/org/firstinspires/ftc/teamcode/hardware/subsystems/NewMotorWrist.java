@@ -10,24 +10,25 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
+/**
+ * One motor based arm system
+ *
+ * @version 1.0.0
+ */
 @Config
 public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
-    public static class Params {
-        /* Operation mode for wrist.
+    /* Operation mode for wrist.
             CONTROLLED allows the wrist to be controlled via code and gamepads
             MANUAL allows the wrist to only be controlled via RoadRunner parameters
         */
-        public final WristMode MODE = WristMode.CONTROLLED;
+    public int target = 0; // Debugging variable used for MANUAL mode
 
-        public int target = 0; // Debugging variable used for MANUAL mode
-
-        private final String MOTOR_NAME = "wrist";
-    }
+    private final WristMode MODE = WristMode.CONTROLLED;
+    private static final String MOTOR_NAME = "wrist";
 
     public enum WristMode {
         CONTROLLED,
@@ -40,7 +41,6 @@ public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
         ACTIVE(-480),
         HANG(-400);
 
-
         public final int position;
 
         WristState(int position) {
@@ -49,12 +49,11 @@ public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
 
     }
 
-    public static Params CONFIG = new Params();
-    public final DcMotorEx wrist;
-    public boolean isActive; // True if the wrist is an "active" position
+    private final DcMotorEx wrist;
+    private boolean isActive; // True if the wrist is an "active" position
 
     public NewMotorWrist(HardwareMap hardwareMap) {
-        wrist = hardwareMap.get(DcMotorEx.class, CONFIG.MOTOR_NAME);
+        wrist = hardwareMap.get(DcMotorEx.class, MOTOR_NAME);
 
         wrist.setDirection(DcMotorSimple.Direction.FORWARD);
         wrist.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

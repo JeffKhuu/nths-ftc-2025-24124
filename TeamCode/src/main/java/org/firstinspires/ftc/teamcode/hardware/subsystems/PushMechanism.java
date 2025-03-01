@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.utilities.ActionCommand;
 import org.firstinspires.ftc.teamcode.utilities.CommandAction;
 
 public class PushMechanism extends SubsystemBase {
@@ -19,22 +18,29 @@ public class PushMechanism extends SubsystemBase {
 
         final double position;
 
-        PushState(double position){
+        PushState(double position) {
             this.position = position;
         }
     }
 
-    Servo pusher;
+    private final Servo pusher;
 
-    public PushMechanism(HardwareMap hardwareMap){
+    public PushMechanism(HardwareMap hardwareMap) {
         pusher = hardwareMap.get(Servo.class, SERVO_NAME);
         pusher.setPosition(PushState.INACTIVE.position);
     }
-    public Action moveTo(PushState state) { return new CommandAction(setTo(state)); }
-    public Command setTo(PushState state){
+
+    public Action moveTo(PushState state) {
+        return new CommandAction(setTo(state));
+    }
+
+    public Command setTo(PushState state) {
         return new SetPosition(state, this);
     }
-    public Command setTo(double position) { return new SetPosition(position, this); }
+
+    public Command setTo(double position) {
+        return new SetPosition(position, this);
+    }
 
     /**
      * FTCLib command that moves the claw to a specified claw state or position.

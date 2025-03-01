@@ -12,13 +12,10 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist.WristState;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.PushMechanism;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.AutoInstructions;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
 @AutonomousEx(preload = 1, cycles = 0)
@@ -39,7 +36,7 @@ public class BlueLeftAuto extends AutoInstructions {
 //            new SleepAction(1)
 //    );
 
-    BlueLeftAuto(LinearOpMode opMode) {
+    public BlueLeftAuto(LinearOpMode opMode) {
         super(opMode, startPose);
     }
 
@@ -55,8 +52,8 @@ public class BlueLeftAuto extends AutoInstructions {
         Actions.runBlocking(new SequentialAction(
                 // Hang Preloaded Specimen
                 new ParallelAction(
-                        wrist.moveTo(NewMotorWrist.WristState.HOME.position-50),
-                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-500),
+                        wrist.moveTo(WristState.HOME.position - 50),
+                        slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position - 500),
                         driveTrain.strafeTo(4, -37, highAcc, highSpeed)
                 ),
                 driveTrain.strafeTo(4, -32, highAcc, highSpeed),

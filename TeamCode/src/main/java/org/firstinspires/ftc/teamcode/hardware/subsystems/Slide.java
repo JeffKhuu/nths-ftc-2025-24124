@@ -22,39 +22,32 @@ import java.util.Locale;
 /**
  * Two motor viper-slide based slide subsystem
  *
- * @version 1.0.0
+ * @version 1.0.1
  */
 @Config
 public class Slide extends SubsystemBase implements TelemetrySubject {
-    public static class Config {
-        /* Operation mode for slides.
-            CONTROLLED allows the slides to be controlled via code and gamepads
-            MANUAL allows the slides to only be controlled via RoadRunner parameters
-        */
-        public static SlideMode MODE = SlideMode.CONTROLLED;
-        public int target = 0; // Debugging variable used in MANUAL mode
+    /* Operation mode for slides.
+       CONTROLLED allows the slides to be controlled via code and gamepads
+       MANUAL allows the slides to only be controlled via RoadRunner parameters
+     */
+    private final static SlideMode MODE = SlideMode.CONTROLLED;
 
-        //Device names to retrieve from hardwareMap
-        public static final String LEFT_MOTOR_NAME = "leftSlide";
-        public static final String RIGHT_MOTOR_NAME = "rightSlide";
+    //Device names to retrieve from hardwareMap
+    private static final String LEFT_MOTOR_NAME = "leftSlide";
+    private static final String RIGHT_MOTOR_NAME = "rightSlide";
 
-        // PIDF Controller Coefficients
-        // Old Coefficients: 0.00825, 0.00125, 0.00012, 0
-        public static PIDFCoefficients coefficients = new PIDFCoefficients(
-                0.00945,
-                0,
-                0.0001,
-                0.01
-        );
-    }
+    private final DcMotorEx leftSlide, rightSlide;
+    private final PIDController controller;
+    private final VoltageSensor voltageSensor;
+    private boolean startFlag = false;
 
-    public static Config CONFIG = new Config();
-
-
-    public final DcMotorEx leftSlide, rightSlide;
-    public final PIDController controller;
-    public final VoltageSensor voltageSensor;
-    public boolean startFlag = false;
+    public static int target = 0; // Debugging variable used in MANUAL mode
+    public static PIDFCoefficients coefficients = new PIDFCoefficients(
+            0.00945,
+            0,
+            0.0001,
+            0.01
+    );
 
     public enum SlideState {
         HOME(0),
@@ -82,15 +75,15 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
     }
 
     // Unpack PIDF coefficients from config
-    public static double p = Config.coefficients.p, i = Config.coefficients.i, d = Config.coefficients.d, f = Config.coefficients.f;
+    public static double p = coefficients.p, i = coefficients.i, d = coefficients.d, f = coefficients.f;
 
     // Create a selection array from all SlideState values
     public final ArraySelect<SlideState> positions = new ArraySelect<>(SlideState.values());
 
 
     public Slide(HardwareMap hardwareMap) {
-        leftSlide = hardwareMap.get(DcMotorEx.class, Config.LEFT_MOTOR_NAME); // Retrieve device names from Config
-        rightSlide = hardwareMap.get(DcMotorEx.class, Config.RIGHT_MOTOR_NAME);
+        leftSlide = hardwareMap.get(DcMotorEx.class, LEFT_MOTOR_NAME); // Retrieve device names from Config
+        rightSlide = hardwareMap.get(DcMotorEx.class, RIGHT_MOTOR_NAME);
         voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
         // MAKE SURE THE DIRECTIONS ARE SET PROPERLY
@@ -109,7 +102,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
     public void periodic() {
         if (!startFlag) return;
 
-        int target = (Config.MODE != SlideMode.MANUAL) ? positions.getSelected().position : CONFIG.target;
+        int target = (MODE != SlideMode.MANUAL) ? positions.getSelected().position : this.target;
 
         controller.setPID(p, i, d);
         int armPos = leftSlide.getCurrentPosition();
@@ -121,12 +114,12 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
     @Override
     public void updateTelemetry(TelemetryEx telemetry) {
-        int target = (Config.MODE != SlideMode.MANUAL) ? positions.getSelected().position : CONFIG.target;
+        int target = (MODE != SlideMode.MANUAL) ? positions.getSelected().position : this.target;
 
         telemetry.print("Target", target);
         telemetry.print(String.format(Locale.CANADA, "Left Slide Pos: %d | Right Slide Pos: %d",
                 leftSlide.getCurrentPosition(), rightSlide.getCurrentPosition()));
-        telemetry.print(Config.coefficients.toString());
+        telemetry.print(coefficients.toString());
 
         if (positions.getSelected().position != 0) {
             telemetry.print("Error", Utilities.calculateErr(target, leftSlide.getCurrentPosition()));
@@ -176,6 +169,9 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         leftSlide.setPower(power);
     }
 
+    /**
+     * Stop and reset all used motors. Sets motor's RunMode to RUN_WITHOUT_ENCODER after.
+     */
     public void stopAndResetEncoders() {
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -183,6 +179,12 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
+    /**
+     * Set the slides start flag to true to start incorporating periodic PIDF control
+     */
+    public void triggerStartFlag() {
+        startFlag = true;
+    }
 }
 
 

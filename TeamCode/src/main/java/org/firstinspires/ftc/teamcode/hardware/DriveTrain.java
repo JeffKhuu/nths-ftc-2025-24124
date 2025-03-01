@@ -12,20 +12,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
-import org.firstinspires.ftc.teamcode.utilities.Utilities;
 import org.firstinspires.ftc.teamcode.utilities.selectors.ArraySelect;
-import org.firstinspires.ftc.teamcode.utilities.selectors.CarouselSelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
 /**
  * Foundational Mecanum Drive Train abstract class. Requires a move method and constructor.
  * Makes use of {@link MecanumDrive} from RoadRunner.
+ *
  * @version 1.0.0
  */
 public abstract class DriveTrain extends SubsystemBase implements TelemetrySubject {
     public final MecanumDrive mecanumDrive; // Roadrunner-Based mecanum drive
-    public final ArraySelect<Double> speeds = new ArraySelect<>(
+    private final ArraySelect<Double> speeds = new ArraySelect<>(
             new Double[]{0.5, 1.0} // Speed multipliers
     );
 
@@ -41,6 +40,10 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     public void periodic() { // This method will be called once per scheduler run
         botHeading = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);// Update Bot Heading
         mecanumDrive.updatePoseEstimate();
+    }
+
+    public ArraySelect<Double> getSpeeds() {
+        return speeds;
     }
 
     public abstract void move(double x, double y, double turn);
@@ -111,10 +114,10 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     /**
      * Strafe the robot to a set of given coordinates using the RoadRunner drive train
      *
-     * @param x x coordinate to strafe to
-     * @param y y coordinate to strafe to
+     * @param x     x coordinate to strafe to
+     * @param y     y coordinate to strafe to
      * @param accel Acceleration Constraint
-     * @param vel Velocity Constraint
+     * @param vel   Velocity Constraint
      * @return RoadRunner Action
      */
     public Action strafeTo(double x, double y, ProfileAccelConstraint accel, VelConstraint vel) {
@@ -129,8 +132,8 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     /**
      * Strafe the robot to a set of given coordinates using the RoadRunner drive train
      *
-     * @param x x coordinate to strafe to
-     * @param y y coordinate to strafe to
+     * @param x       x coordinate to strafe to
+     * @param y       y coordinate to strafe to
      * @param heading heading to rotate to (in degrees)
      * @return RoadRunner Action
      */

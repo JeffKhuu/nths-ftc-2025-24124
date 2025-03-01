@@ -8,18 +8,16 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist.WristState;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.AutoInstructions;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
 @AutonomousEx(preload = 0, cycles = 0)
 public class BlueRightAuto extends AutoInstructions {
     public static Pose2d startPose = new Pose2d(new Vector2d(12, -64), Math.toRadians(90));
 
-    BlueRightAuto(LinearOpMode opMode) {
+    public BlueRightAuto(LinearOpMode opMode) {
         super(opMode, startPose);
     }
 
@@ -38,7 +36,7 @@ public class BlueRightAuto extends AutoInstructions {
 
                 // Hang Preloaded Specimen
                 new ParallelAction(
-                        wrist.moveTo(NewMotorWrist.WristState.HOME.position),
+                        wrist.moveTo(WristState.HOME.position),
                         slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position),
                         driveTrain.strafeTo(12, -37)
                 ),
@@ -47,8 +45,8 @@ public class BlueRightAuto extends AutoInstructions {
                 driveTrain.strafeTo(34, -45),
 
                 //1st Sample Push (untested)
-                driveTrain.strafeTo(48,-28, 0),
-                driveTrain.strafeTo(58,-65),
+                driveTrain.strafeTo(48, -28, 0),
+                driveTrain.strafeTo(58, -65),
 
 
                 //2nd Specimen Clip
@@ -63,7 +61,7 @@ public class BlueRightAuto extends AutoInstructions {
 //
                 // Hang Specimen using Static Clip
                 new ParallelAction(
-                        wrist.moveTo(MotorWrist.WristState.HOME.position),
+                        wrist.moveTo(WristState.HOME.position),
                         driveTrain.strafeTo(8, -37, 90),
                         slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position)
                 ),
@@ -81,7 +79,7 @@ public class BlueRightAuto extends AutoInstructions {
 
                 // Hang Specimen using Static Clip
                 new ParallelAction(
-                        wrist.moveTo(MotorWrist.WristState.HOME.position),
+                        wrist.moveTo(WristState.HOME.position),
                         driveTrain.strafeTo(4, -37, 90),
                         slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position)
                 ),
@@ -91,7 +89,7 @@ public class BlueRightAuto extends AutoInstructions {
                 // Park
                 new ParallelAction(
                         driveTrain.strafeTo(48, -60),
-                        wrist.moveTo(NewMotorWrist.WristState.HOME.position),
+                        wrist.moveTo(WristState.HOME.position),
                         slides.moveTo(Slide.SlideState.HOME.position)
                 )
         ));

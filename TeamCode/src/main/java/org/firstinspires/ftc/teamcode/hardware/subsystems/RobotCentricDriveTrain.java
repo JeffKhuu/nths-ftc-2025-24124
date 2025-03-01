@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.utilities.pathfinding.Node;
+import org.firstinspires.ftc.teamcode.utilities.selectors.ArraySelect;
 
 import java.util.ArrayList;
 
@@ -36,6 +37,7 @@ public class RobotCentricDriveTrain extends DriveTrain {
             rightBackPower /= power + Math.abs(turn);
         }
 
+        ArraySelect<Double> speeds = getSpeeds();
         setDrivePower(leftPower * speeds.getSelected(),
                 leftBackPower * speeds.getSelected(),
                 rightPower * speeds.getSelected(),

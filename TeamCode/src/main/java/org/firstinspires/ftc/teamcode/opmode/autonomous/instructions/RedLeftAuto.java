@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous.instructions;
 
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -9,11 +8,9 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.MotorWrist;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist.WristState;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Wrist;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.AutoInstructions;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
 @AutonomousEx(preload = 1, cycles = 0)
@@ -31,7 +28,7 @@ public class RedLeftAuto extends AutoInstructions {
 //            new SleepAction(1)
 //    );
 
-    RedLeftAuto(LinearOpMode opMode) {
+    public RedLeftAuto(LinearOpMode opMode) {
         super(opMode, startPose);
     }
 
@@ -49,7 +46,7 @@ public class RedLeftAuto extends AutoInstructions {
                 //claw.moveTo(Claw.ClawState.CLOSED),
 
                 // Hang Preloaded Specimen
-                wrist.moveTo(NewMotorWrist.WristState.INACTIVE.position),
+                wrist.moveTo(WristState.INACTIVE.position),
                 slides.moveTo(Slide.SlideState.HIGH_BUCKET.position),
                 new SleepAction(5)
         ));

@@ -7,7 +7,6 @@ import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
-import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -19,6 +18,9 @@ import org.firstinspires.ftc.teamcode.utilities.selectors.ArraySelect;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
+/**
+ * @deprecated Replaced with {@link NewMotorWrist}
+ */
 @Config
 public class MotorWrist extends SubsystemBase implements TelemetrySubject {
     public static class Params {
@@ -26,9 +28,9 @@ public class MotorWrist extends SubsystemBase implements TelemetrySubject {
             CONTROLLED allows the wrist to be controlled via code and gamepads
             MANUAL allows the wrist to only be controlled via RoadRunner parameters
         */
-            public final WristMode MODE = WristMode.CONTROLLED;
+        public final WristMode MODE = WristMode.CONTROLLED;
 
-        public int target =  0; // Debugging variable used for MANUAL mode
+        public int target = 0; // Debugging variable used for MANUAL mode
 
         private final String MOTOR_NAME = "wrist";
 
@@ -45,7 +47,7 @@ public class MotorWrist extends SubsystemBase implements TelemetrySubject {
         MANUAL
     }
 
-    public enum WristState{
+    public enum WristState {
         HOME(-100),
         INACTIVE(-250),
         ACTIVE(-550),
@@ -53,7 +55,10 @@ public class MotorWrist extends SubsystemBase implements TelemetrySubject {
 
 
         public final int position;
-        WristState(int position){this.position = position;}
+
+        WristState(int position) {
+            this.position = position;
+        }
 
     }
 
@@ -67,7 +72,7 @@ public class MotorWrist extends SubsystemBase implements TelemetrySubject {
     public int target = CONFIG.MODE == WristMode.MANUAL ? CONFIG.target : positions.getSelected().position;
     public static double ticks_in_degrees = 600 / 180.0;
 
-    public MotorWrist(HardwareMap hardwareMap){
+    public MotorWrist(HardwareMap hardwareMap) {
         controller = new PIDController(p, i, d);
         wrist = hardwareMap.get(DcMotorEx.class, CONFIG.MOTOR_NAME);
 
@@ -86,7 +91,7 @@ public class MotorWrist extends SubsystemBase implements TelemetrySubject {
 
     @Override
     public void periodic() {
-        if(!startFlag) return;
+        if (!startFlag) return;
 
         target = CONFIG.MODE == WristMode.MANUAL ? CONFIG.target : positions.getSelected().position;
 
@@ -102,14 +107,16 @@ public class MotorWrist extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Toggle the current position between ACTIVE and INACTIVE
+     *
      * @return A FTCLib COmmand.
      */
-        public Command toggle() {
+    public Command toggle() {
         return new ToggleWrist(this);
     }
 
     /**
      * Move the slides to a given target position as a RaodRunner action.
+     *
      * @param target Target position in encoder ticks for the slides to travel to
      * @return A RoadRunner Action
      */
@@ -141,8 +148,8 @@ public class MotorWrist extends SubsystemBase implements TelemetrySubject {
 
     public Action setSelected(WristState state) {
         return (TelemetryPacket packet) -> {
-            for(int i = 0; i < WristState.values().length; i++){
-                if(WristState.values()[i] == state){
+            for (int i = 0; i < WristState.values().length; i++) {
+                if (WristState.values()[i] == state) {
                     positions.setSelected(i);
                     return false;
                 }
@@ -162,9 +169,9 @@ public class MotorWrist extends SubsystemBase implements TelemetrySubject {
 
         @Override
         public void initialize() {
-            if(wrist.positions.getSelected() != WristState.ACTIVE){
+            if (wrist.positions.getSelected() != WristState.ACTIVE) {
                 wrist.positions.setSelected(2);
-            }else{
+            } else {
                 wrist.positions.setSelected(1);
             }
         }
@@ -175,7 +182,7 @@ public class MotorWrist extends SubsystemBase implements TelemetrySubject {
         }
     }
 
-    public void stopAndResetEncoders(){
+    public void stopAndResetEncoders() {
         wrist.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 }

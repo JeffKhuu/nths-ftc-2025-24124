@@ -3,35 +3,22 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.Vector2d;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.gamepad.GamepadKeys.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys.Button;
-import com.arcrobotics.ftclib.gamepad.TriggerReader;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
 import org.firstinspires.ftc.teamcode.hardware.DriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.PushMechanism;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.RobotCentricDriveTrain;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
-import org.firstinspires.ftc.teamcode.utilities.ActionCommand;
 import org.firstinspires.ftc.teamcode.utilities.ControllerEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryMaster;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Config
 @TeleOp(name = "Main TeleOp", group = "ඞ")
@@ -48,11 +35,6 @@ public class Main extends OpMode {
     private TelemetryEx telemetryEx;
     private TelemetryMaster telemetryMaster;
 
-    // TODO: Reconstruct TelemetryEx w/ FTCDashboard
-
-    private List<Action> runningActions = new ArrayList<>();
-    private final FtcDashboard dash = FtcDashboard.getInstance();
-
     @Override
     public void init() {
         //region Instantiate TeleOp Systems
@@ -66,8 +48,8 @@ public class Main extends OpMode {
 
         driver = ControllerEx.Builder(gamepad1)
                 // Drive Train
-                .bind(Button.LEFT_BUMPER, new InstantCommand(driveTrain.speeds::previous))
-                .bind(Button.RIGHT_BUMPER, new InstantCommand(driveTrain.speeds::next))
+                .bind(Button.LEFT_BUMPER, new InstantCommand(driveTrain.getSpeeds()::previous))
+                .bind(Button.RIGHT_BUMPER, new InstantCommand(driveTrain.getSpeeds()::next))
                 .bind(Button.START, new InstantCommand((driveTrain::resetHeading)))
 
                 .bind(Button.X, pusher.setTo(PushMechanism.PushState.ACTIVE))
@@ -94,7 +76,7 @@ public class Main extends OpMode {
                 .bind(Button.A, wrist.toggle())
                 .bind(Button.BACK, wrist.setPositionTo(NewMotorWrist.WristState.HOME))
                 .bind(Button.START, new InstantCommand(() -> {
-                    slides.startFlag = true;
+                    slides.triggerStartFlag();
                     CommandScheduler.getInstance().schedule(wrist.setPositionTo(NewMotorWrist.WristState.HOME));
                 }))
 
@@ -116,25 +98,12 @@ public class Main extends OpMode {
     @Override
     public void loop() {
         CommandScheduler.getInstance().run();
-        TelemetryPacket packet = new TelemetryPacket(); // Create a new TelemetryPacket
         FieldConstants.savePose(driveTrain.mecanumDrive.pose);
 
         double x = driver.getLeftX();
         double y = driver.getLeftY();
         double turn = driver.getRightX();
         driveTrain.move(x, y, turn);
-
-//        // TODO: Test enquing actions
-//        ArrayList<Action> newActions = new ArrayList<>();
-//        for (Action action : runningActions) { // Run queued up TeleOp Actions
-//            action.preview(packet.fieldOverlay());
-//            if (action.run(packet)) {
-//                newActions.add(action); // If the action needs to be ran again queue it for next loop
-//            }
-//        }
-//        runningActions = newActions;
-
-        dash.sendTelemetryPacket(packet);
 
         telemetryMaster.update(); //Updates telemetry for all subscribed systems
         telemetry.addData("\n\nRuntime", "%.2f", getRuntime());

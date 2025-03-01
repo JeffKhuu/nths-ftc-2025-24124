@@ -9,12 +9,14 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.utilities.CommandAction;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetryEx;
 import org.firstinspires.ftc.teamcode.utilities.telemetryex.TelemetrySubject;
 
+/**
+ * @deprecated Replaced with {@link Claw}
+ */
 @Config
 public class Intake extends SubsystemBase implements TelemetrySubject {
     public static class Config {
@@ -24,11 +26,12 @@ public class Intake extends SubsystemBase implements TelemetrySubject {
     }
 
     public enum IntakeState { // Accepts values between 0.5 and 1.0
-        INTAKE (0.8),
+        INTAKE(0.8),
         EXHAUST(-0.8),
         DISABLED(0);
 
         public final double power;
+
         IntakeState(double power) {
             this.power = power;
         }
@@ -37,7 +40,7 @@ public class Intake extends SubsystemBase implements TelemetrySubject {
     private CRServo leftIntake;
     private CRServo rightIntake;
 
-    public Intake(HardwareMap hardwareMap){
+    public Intake(HardwareMap hardwareMap) {
         leftIntake = hardwareMap.get(CRServo.class, Config.LEFT_INTAKE);
         rightIntake = hardwareMap.get(CRServo.class, Config.RIGHT_INTAKE);
 
@@ -55,6 +58,7 @@ public class Intake extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Move the intake servos to a valid given IntakeState
+     *
      * @param state A valid IntakeState
      * @return A RoadRunner Action.
      */
@@ -64,8 +68,9 @@ public class Intake extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Move the intake servos to a valid given IntakeState
+     *
      * @param state A valid IntakeState
-     * @param time Time to spin for
+     * @param time  Time to spin for
      * @return A RoadRunner Action.
      */
     public Action rotateForSeconds(IntakeState state, int time) {
@@ -78,6 +83,7 @@ public class Intake extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Set the power of the intake servos to a given IntakeState
+     *
      * @param state A valid IntakeState
      * @return An FTCLib Command
      */
@@ -87,6 +93,7 @@ public class Intake extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Set the power of the intake servos to a given power
+     *
      * @param power An integer
      * @return An FTCLib Command
      */
@@ -127,6 +134,7 @@ public class Intake extends SubsystemBase implements TelemetrySubject {
 
     /**
      * Set the power of both servos
+     *
      * @param power Power to give to the servos
      */
     public void setPowers(double power) {
