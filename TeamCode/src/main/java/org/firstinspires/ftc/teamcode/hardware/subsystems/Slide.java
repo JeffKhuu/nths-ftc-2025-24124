@@ -51,10 +51,10 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
     public enum SlideState {
         HOME(0),
-        ACTIVE(500), // 380
+        ACTIVE(750), // 380
         //INBETWEEN(800),
         //HOVER(1200), // 760
-        CLIPPER(1650), //1000
+        CLIPPER(1600), //1650
         //HANG(2650), // 1700
         HIGH_RUNG(3700), // 2000
         //CLIP_HANG(5000), //3200
@@ -93,7 +93,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
         leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //positions.setSelected(0);
+        positions.setSelected(0);
         controller = new PIDController(p, i, d);
         register();
     }
@@ -102,19 +102,24 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
     public void periodic() {
         if (!startFlag) return;
 
-        int target = (MODE != SlideMode.MANUAL) ? positions.getSelected().position : this.target;
+        int target = (MODE != SlideMode.MANUAL) ? positions.getSelected().position : Slide.target;
 
         controller.setPID(p, i, d);
         int armPos = leftSlide.getCurrentPosition();
         double pid = controller.calculate(armPos, target);
         double power = (pid + f) * (12.0 / voltageSensor.getVoltage()); // Compensate for voltage discrepencies
 
-        setPower(power);
+        leftSlide.setPower(power);
+        rightSlide.setPower(power);
+
+        if(rightSlide.getCurrentPosition() < 500 && positions.getSelected() == SlideState.HOME){
+            rightSlide.setPower(0);
+        }
     }
 
     @Override
     public void updateTelemetry(TelemetryEx telemetry) {
-        int target = (MODE != SlideMode.MANUAL) ? positions.getSelected().position : this.target;
+        int target = (MODE != SlideMode.MANUAL) ? positions.getSelected().position : Slide.target;
 
         telemetry.print("Target", target);
         telemetry.print(String.format(Locale.CANADA, "Left Slide Pos: %d | Right Slide Pos: %d",
@@ -144,7 +149,7 @@ public class Slide extends SubsystemBase implements TelemetrySubject {
 
             controller.setPID(p, i, d);
             double pid = controller.calculate(slidePos, target);
-            double power = (pid + f) * (12.0 / voltageSensor.getVoltage()); // Compensate for voltages
+            double power = (pid + f + 0.4) * (12.0 / voltageSensor.getVoltage()); // Compensate for voltages
             setPower(power);
 
             packet.put("Power", power);

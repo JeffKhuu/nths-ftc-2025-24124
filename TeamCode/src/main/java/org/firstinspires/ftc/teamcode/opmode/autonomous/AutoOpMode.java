@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.constants.FieldConstants.START_POSITION;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
 @Autonomous(name = "Auto OpMode", group = "ඞ", preselectTeleOp = "Main TeleOp")
-@AutonomousEx(preload = 0, cycles = 0, park = true)
 public class AutoOpMode extends LinearOpMode {
     // Location
     boolean startPoseChosen = false;
@@ -46,6 +45,15 @@ public class AutoOpMode extends LinearOpMode {
         telemetry.update();
 
         auto.init();
+
+        CommandScheduler.getInstance().reset();
+
+        CommandScheduler.getInstance().registerSubsystem(auto.driveTrain);
+        CommandScheduler.getInstance().registerSubsystem(auto.slides);
+        CommandScheduler.getInstance().registerSubsystem(auto.wrist);
+        CommandScheduler.getInstance().registerSubsystem(auto.intake);
+        CommandScheduler.getInstance().registerSubsystem(auto.pusher);
+
         waitForStart();
         auto.execute(); // Executes after the START (▶) button is pressed
         auto.stop();
@@ -55,6 +63,7 @@ public class AutoOpMode extends LinearOpMode {
         CommandScheduler.getInstance().unregisterSubsystem(auto.slides);
         CommandScheduler.getInstance().unregisterSubsystem(auto.wrist);
         CommandScheduler.getInstance().unregisterSubsystem(auto.intake);
+        CommandScheduler.getInstance().unregisterSubsystem(auto.pusher);
     }
 
 

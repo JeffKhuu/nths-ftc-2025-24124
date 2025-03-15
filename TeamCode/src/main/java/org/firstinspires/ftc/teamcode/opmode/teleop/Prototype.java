@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.arcrobotics.ftclib.controller.PIDController;
@@ -38,7 +39,7 @@ public class Prototype extends OpMode {
 
     @Override
     public void init() {
-        driveTrain = new RobotCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose());
+        driveTrain = new RobotCentricDriveTrain(hardwareMap, new Pose2d(0, 0, Math.toRadians(90)));
     }
 
     @Override

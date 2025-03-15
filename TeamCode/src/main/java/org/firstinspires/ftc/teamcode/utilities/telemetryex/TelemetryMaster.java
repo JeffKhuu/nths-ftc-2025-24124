@@ -39,9 +39,11 @@ public class TelemetryMaster { //TODO: DEPRECATE
      */
     public void update(){
         subjects.forEach(subject -> {
-            telemetry.print(Utilities.center(40, subject.getClass().getSimpleName().toUpperCase()));
-            subject.updateTelemetry(telemetry);
-            telemetry.print("");
+            String subsystemTitle = Utilities.center(40, subject.getClass().getSimpleName().toUpperCase());
+
+            telemetry.print(subsystemTitle); // Print the subsystem's title
+            subject.updateTelemetry(telemetry); // Call on the subsystem to report telemetry
+            telemetry.print(""); // Print a line break
         });
     }
 }

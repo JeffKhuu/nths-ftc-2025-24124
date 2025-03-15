@@ -20,7 +20,6 @@ public abstract class AutoInstructions {
     public Slide slides;
     public NewMotorWrist wrist;
     public PushMechanism pusher;
-    Pathfinder pathfinder;
 
     public AutoInstructions(LinearOpMode opMode, Pose2d startPose) {
         this.opMode = opMode;

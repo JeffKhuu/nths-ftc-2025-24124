@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware.subsystems;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -26,8 +30,8 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
     private static final ClawState START = ClawState.CLOSED;
 
     public enum ClawState { // Accepts values between 0.5 and 1.0
-        OPEN(0),
-        CLOSED(0.5);
+        CLOSED(0),
+        OPEN(0.5);
 
         public final double position;
 
@@ -85,11 +89,17 @@ public class Claw extends SubsystemBase implements TelemetrySubject {
      * @return A RoadRunner Action.
      */
     public Action moveTo(ClawState state) {
-        return new CommandAction(setTo(state));
+        return (TelemetryPacket packet) -> {
+            claw.setPosition(state.position);
+            return false;
+        };
     }
 
     public Action moveWrist(WristState state) {
-        return new CommandAction(setWristTo(state));
+        return (TelemetryPacket packet) -> {
+            wrist.setPosition(state.position);
+            return false;
+        };
     }
 
     public Command setWristTo(WristState state) {

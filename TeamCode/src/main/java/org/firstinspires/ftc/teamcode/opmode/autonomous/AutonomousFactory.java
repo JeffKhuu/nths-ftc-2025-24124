@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.constants.FieldConstants.ALLIANCE;
 import org.firstinspires.ftc.teamcode.constants.FieldConstants.START_POSITION;
 import org.firstinspires.ftc.teamcode.opmode.autonomous.instructions.BlueLeftAuto;
 import org.firstinspires.ftc.teamcode.opmode.autonomous.instructions.BlueRightAuto;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.instructions.PrototypeAuto;
 import org.firstinspires.ftc.teamcode.opmode.autonomous.instructions.RedLeftAuto;
 import org.firstinspires.ftc.teamcode.opmode.autonomous.instructions.RedRightAuto;
 

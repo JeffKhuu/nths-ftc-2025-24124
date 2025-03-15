@@ -37,8 +37,8 @@ public class NewMotorWrist extends SubsystemBase implements TelemetrySubject {
 
     public enum WristState {
         HOME(0),
-        INACTIVE(-150),
-        ACTIVE(-480),
+        INACTIVE(-200),
+        ACTIVE(-520),
         HANG(-400);
 
         public final int position;

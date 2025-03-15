@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.VelConstraint;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -27,13 +28,14 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
     private final ArraySelect<Double> speeds = new ArraySelect<>(
             new Double[]{0.5, 1.0} // Speed multipliers
     );
+    private static Pose2d pose;
 
     public double botHeading; // Angle (in radians) the robot is facing
 
     public DriveTrain(HardwareMap hardwareMap, Pose2d pose2d) {
-        FieldConstants.savePose(pose2d);
         mecanumDrive = new MecanumDrive(hardwareMap, pose2d); // Configure motor names in this constructor
         botHeading = mecanumDrive.lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        pose = pose2d;
     }
 
     @Override
@@ -95,6 +97,59 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
         telemetry.print("Position (y)", mecanumDrive.pose.position.y);
     }
 
+    public Pose2d getLastSavedPose(){
+        return pose;
+    }
+
+    public void savePose(Pose2d newPose){
+        pose = newPose;
+    }
+
+    public void stopAndResetEncoders(){
+        mecanumDrive.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        mecanumDrive.rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        mecanumDrive.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        mecanumDrive.leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        mecanumDrive.rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        mecanumDrive.rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    public Action splineToHeading(double x, double y, double heading, double tangent){
+        Pose2d lastPose = getLastSavedPose();
+        savePose(new Pose2d(x, y, Math.toRadians(heading)));
+        return mecanumDrive.actionBuilder(lastPose)
+                .splineToLinearHeading(new Pose2d(new Vector2d(x, y), Math.toRadians(heading)), Math.toRadians(tangent))
+                .build();
+    }
+
+    public Action splineToSplineHeading(double x, double y, double heading, double tangent){
+        Pose2d lastPose = getLastSavedPose();
+        savePose(new Pose2d(x, y, Math.toRadians(heading)));
+        return mecanumDrive.actionBuilder(lastPose)
+                .splineToSplineHeading(new Pose2d(new Vector2d(x, y), Math.toRadians(heading)), Math.toRadians(tangent))
+                .build();
+    }
+
+
+    public Action splineTo(double x, double y, double tangent){
+        Pose2d lastPose = getLastSavedPose();
+        savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
+        return mecanumDrive.actionBuilder(lastPose)
+                .splineTo(new Vector2d(x, y), Math.toRadians(tangent))
+                .build();
+
+    }
+
+    public Action splineToConstant(double x, double y, double tangent){
+        Pose2d lastPose = getLastSavedPose();
+        savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
+        return mecanumDrive.actionBuilder(lastPose)
+                .splineToConstantHeading(new Vector2d(x, y), Math.toRadians(tangent))
+                .build();
+
+    }
+
     /**
      * Strafe the robot to a set of given coordinates using the RoadRunner drive train
      *
@@ -103,29 +158,38 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
      * @return RoadRunner Action
      */
     public Action strafeTo(double x, double y) {
-        Pose2d lastPose = FieldConstants.getLastSavedPose();
-        FieldConstants.savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
+        Pose2d lastPose = getLastSavedPose();
+        savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
 
         return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
                 .strafeTo(new Vector2d(x, y))
                 .build();
     }
 
-    /**
-     * Strafe the robot to a set of given coordinates using the RoadRunner drive train
-     *
-     * @param x     x coordinate to strafe to
-     * @param y     y coordinate to strafe to
-     * @param accel Acceleration Constraint
-     * @param vel   Velocity Constraint
-     * @return RoadRunner Action
-     */
-    public Action strafeTo(double x, double y, ProfileAccelConstraint accel, VelConstraint vel) {
-        Pose2d lastPose = FieldConstants.getLastSavedPose();
-        FieldConstants.savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
+    public Action strafeTo(double x, double y, VelConstraint v, ProfileAccelConstraint a) {
+        Pose2d lastPose = getLastSavedPose();
+        savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
 
         return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
-                .strafeTo(new Vector2d(x, y), vel, accel)
+                .strafeTo(new Vector2d(x, y), v, a)
+                .build();
+    }
+
+    public Action strafeTo(double x, double y, double heading, VelConstraint v, ProfileAccelConstraint a) {
+        Pose2d lastPose = getLastSavedPose();
+        savePose(new Pose2d(x, y, lastPose.heading.toDouble()));
+
+        return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
+                .strafeToLinearHeading(new Vector2d(x, y), Math.toRadians(heading), v, a)
+                .build();
+    }
+
+    public Action strafeToSplineHeading(double x, double y, double heading){
+        Pose2d lastPose = getLastSavedPose();
+        savePose(new Pose2d(x, y, Math.toRadians(heading)));
+
+        return mecanumDrive.actionBuilder(lastPose)
+                .strafeToSplineHeading(new Vector2d(x, y), Math.toRadians(heading))
                 .build();
     }
 
@@ -138,9 +202,9 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
      * @return RoadRunner Action
      */
     public Action strafeTo(double x, double y, int heading) {
-        Pose2d lastPose = FieldConstants.getLastSavedPose();
+        Pose2d lastPose = getLastSavedPose();
 
-        FieldConstants.savePose(new Pose2d(x, y, Math.toRadians(heading)));
+        savePose(new Pose2d(x, y, Math.toRadians(heading)));
         return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
                 .strafeToLinearHeading(new Vector2d(x, y), Math.toRadians(heading), new TranslationalVelConstraint(300))
                 .build();
@@ -155,8 +219,8 @@ public abstract class DriveTrain extends SubsystemBase implements TelemetrySubje
      * @return RoadRunner Action
      */
     public Action turnTo(double angle) {
-        Pose2d lastPose = FieldConstants.getLastSavedPose();
-        FieldConstants.savePose(new Pose2d(lastPose.position, Math.toRadians(angle)));
+        Pose2d lastPose = getLastSavedPose();
+        savePose(new Pose2d(lastPose.position, Math.toRadians(angle)));
 
         return mecanumDrive.actionBuilder(lastPose) //fixme may cause problems
                 .turnTo(Math.toRadians(angle))

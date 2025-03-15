@@ -18,6 +18,9 @@ public class ResetMotorEncoders extends LinearOpMode {
     public void runOpMode() {
         slides = new Slide(hardwareMap);
         wrist = new NewMotorWrist(hardwareMap);
+
+        CommandScheduler.getInstance().unregisterSubsystem(slides);
+        CommandScheduler.getInstance().unregisterSubsystem(wrist);
         telemetry.addLine("Press START [▶] to reset the encoders on select encoders");
         telemetry.addLine();
         telemetry.addLine("To view all encoders that are reset see ResetMotorEncoders.java. To add motors to reset in ResetMotorEncoders.java");

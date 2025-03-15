@@ -46,11 +46,7 @@ public class StrafeDebugger extends LinearOpMode {
         resetRuntime();
 
         while (opModeIsActive()) {
-            if (!FieldConstants.getLastSavedPose().position.equals(new Vector2d(x, y))) {
-                Actions.runBlocking(driveTrain.strafeTo(x, y));
-            } else if (FieldConstants.getLastSavedPose().heading.toDouble() != Math.toRadians(heading)) {
-                Actions.runBlocking(driveTrain.turnTo(Math.toRadians(heading)));
-            }
+            Actions.runBlocking(driveTrain.strafeTo(x, y));
 
         }
     }

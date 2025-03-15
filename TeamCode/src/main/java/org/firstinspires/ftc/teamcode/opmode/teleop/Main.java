@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys.Button;
@@ -38,13 +40,23 @@ public class Main extends OpMode {
     @Override
     public void init() {
         //region Instantiate TeleOp Systems
-        driveTrain = new RobotCentricDriveTrain(hardwareMap, FieldConstants.getLastSavedPose());
+        driveTrain = new RobotCentricDriveTrain(hardwareMap, new Pose2d(new Vector2d(0, 0), Math.toRadians(90)));
         slides = new Slide(hardwareMap);
         wrist = new NewMotorWrist(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         claw = new Claw(hardwareMap);
         pusher = new PushMechanism(hardwareMap);
         //endregion
+
+        CommandScheduler.getInstance().reset();
+
+        CommandScheduler.getInstance().registerSubsystem(driveTrain);
+        CommandScheduler.getInstance().registerSubsystem(slides);
+        CommandScheduler.getInstance().registerSubsystem(wrist);
+        CommandScheduler.getInstance().registerSubsystem(claw);
+        CommandScheduler.getInstance().registerSubsystem(pusher);
+
+
 
         driver = ControllerEx.Builder(gamepad1)
                 // Drive Train
@@ -61,11 +73,9 @@ public class Main extends OpMode {
                 // Slides
                 .bind(Button.DPAD_UP, new InstantCommand(slides.positions::next))
                 .bind(Button.DPAD_DOWN, new InstantCommand(slides.positions::previous))
-                .bind(Button.DPAD_RIGHT, new InstantCommand(() -> slides.positions.setSelected(Slide.SlideState.MAX))) // Move the slides to the 7th position
+                .bind(Button.DPAD_RIGHT, new InstantCommand(() -> slides.positions.setSelected(Slide.SlideState.MAX)))
                 .bind(Button.DPAD_LEFT, new InstantCommand(() -> slides.positions.setSelected(1)))
-                .bind(Button.Y, new InstantCommand(() -> {
-                    slides.stopAndResetEncoders();
-                }))
+                .bind(Button.Y, new InstantCommand(slides::stopAndResetEncoders))
 
                 // Intake
                 .bind(Button.X, claw.toggle())
@@ -85,11 +95,8 @@ public class Main extends OpMode {
         //region Setup Extended Telemetry
         telemetryEx = new TelemetryEx(telemetry);
         telemetryMaster = new TelemetryMaster(telemetryEx);
-        telemetryMaster
-                .subscribe(driveTrain)
-                .subscribe(wrist)
-                .subscribe(claw)
-                .subscribe(slides);
+//        telemetryMaster
+//                .subscribe(slides);
         //endregion
 
         telemetry.addData("Status", "Initialized");
@@ -98,24 +105,21 @@ public class Main extends OpMode {
     @Override
     public void loop() {
         CommandScheduler.getInstance().run();
-        FieldConstants.savePose(driveTrain.mecanumDrive.pose);
+        //driveTrain.mecanumDrive.updatePoseEstimate();
 
         double x = driver.getLeftX();
         double y = driver.getLeftY();
         double turn = driver.getRightX();
         driveTrain.move(x, y, turn);
 
-        telemetryMaster.update(); //Updates telemetry for all subscribed systems
+        //telemetryMaster.update(); //Updates telemetry for all subscribed systems
         telemetry.addData("\n\nRuntime", "%.2f", getRuntime());
     }
 
     @Override
     public void stop() {
         // IMPORTANT! UNSUBSCRIBE AND UNREGISTER ALL SUBSYSTEMS
-        telemetryMaster.unsubscribe(driveTrain);
-        telemetryMaster.unsubscribe(slides);
-        telemetryMaster.unsubscribe(wrist);
-        telemetryMaster.unsubscribe(claw);
+        //telemetryMaster.unsubscribe(slides);
 
         CommandScheduler.getInstance().unregisterSubsystem(driveTrain);
         CommandScheduler.getInstance().unregisterSubsystem(slides);
