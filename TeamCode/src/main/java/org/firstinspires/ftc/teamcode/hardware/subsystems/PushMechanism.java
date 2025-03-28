@@ -13,7 +13,7 @@ public class PushMechanism extends SubsystemBase {
     public final String SERVO_NAME = "pusher";
 
     public enum PushState {
-        INACTIVE(0.05),
+        INACTIVE(0),
         ACTIVE(0.33);
 
         final double position;

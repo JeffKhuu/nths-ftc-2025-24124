@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous.instructions;
 
+import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -24,7 +25,7 @@ import java.lang.Math;
 public class BlueLeftAuto extends AutoInstructions {
 
     // Instantiate subsystems
-    public static Pose2d startPose = new Pose2d(new Vector2d(12, -64), Math.toRadians(90));
+    public static Pose2d startPose = new Pose2d(new Vector2d(9, -64), Math.toRadians(90));
     TranslationalVelConstraint highSpeed = new TranslationalVelConstraint(70);
     ProfileAccelConstraint highAcc = new ProfileAccelConstraint(-30, 70);
 
@@ -50,13 +51,13 @@ public class BlueLeftAuto extends AutoInstructions {
                                 slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-400),
                                 driveTrain.strafeTo(3, -37)
                         ),
-                        driveTrain.strafeTo(3, -33),
+                        driveTrain.strafeTo(3, -32),
 
                         new ParallelAction(
-                                slides.moveTo(5000),
+                                slides.moveTo(4500),
                                 new SequentialAction(
                                         new SleepAction(0.15),
-                                        driveTrain.strafeTo(3, -43)
+                                        driveTrain.strafeTo(3, -45)
                                 )
                         ),
 
@@ -81,7 +82,7 @@ public class BlueLeftAuto extends AutoInstructions {
 
                                         // Retrieve Specimen from Observation Station
                                         driveTrain.splineToHeading(60, -59, Math.toRadians(0), Math.toRadians(0)),
-                                        driveTrain.splineTo(63, -59, Math.toRadians(0))
+                                        driveTrain.splineTo(64, -59, Math.toRadians(0))
                                 )
                         ),
 
@@ -89,7 +90,7 @@ public class BlueLeftAuto extends AutoInstructions {
                         // Deposit Specimen on High Chamber
                         new ParallelAction(
                                 slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-200),
-                                driveTrain.strafeToSplineHeading(5, -35, 90)
+                                driveTrain.strafeToSplineHeading(5, -34, 90)
 
                         ),
                         slides.moveTo(5500),
@@ -106,13 +107,13 @@ public class BlueLeftAuto extends AutoInstructions {
                         new ParallelAction(
                                 slides.moveTo(Slide.SlideState.CLIPPER.position),
                                 new SequentialAction(
-                                        driveTrain.strafeToSplineHeading(40, -65, 271)
+                                        driveTrain.strafeToSplineHeading(40, -66, 271)
                                 )
                         ),
 
                         // Deposit Specimen on High Chamber
                         new ParallelAction(
-                                driveTrain.strafeToSplineHeading(6, -35, 90),
+                                driveTrain.strafeToSplineHeading(6, -34, 90),
                                 slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-200)
                         ),
                         slides.moveTo(5500),
@@ -127,23 +128,20 @@ public class BlueLeftAuto extends AutoInstructions {
                         // Retrieve Specimen from Observation Station
                         new ParallelAction(
                                 slides.moveTo(Slide.SlideState.CLIPPER.position),
-                                driveTrain.strafeToSplineHeading(40, -65, 271)
+                                driveTrain.strafeToSplineHeading(40, -66, 271)
                         ),
 
                         // Deposit Specimen on High Chamber
                         new ParallelAction(
                                 //driveTrain.strafeToSplineHeading(5, -33, 90), // keep old?
                                 slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-200),
-                                driveTrain.mecanumDrive.actionBuilder(new Pose2d(40, -65, Math.toRadians(270)))
-                                        .strafeToSplineHeading(new Vector2d(7, -36), Math.toRadians(90))
-                                        .splineToConstantHeading(new Vector2d(7, -33), Math.toRadians(90))
-                                        .build()
+                                driveTrain.strafeToSplineHeading(6.5, -34, 90)
                         ),
                         new ParallelAction(
                                 slides.moveTo(Slide.SlideState.HOME.position),
                                 new SequentialAction(
-                                        new SleepAction(0.15),
-                                        driveTrain.strafeTo(40, -62, new TranslationalVelConstraint(70), new ProfileAccelConstraint(-30, 70))
+                                        new SleepAction(0.50),
+                                        driveTrain.strafeTo(64, -64, new TranslationalVelConstraint(70), new ProfileAccelConstraint(-30, 70))
                                 )
                         ))
 

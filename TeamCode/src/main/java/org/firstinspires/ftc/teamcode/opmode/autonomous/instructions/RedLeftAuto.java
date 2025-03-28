@@ -1,35 +1,33 @@
 package org.firstinspires.ftc.teamcode.opmode.autonomous.instructions;
 
-import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.constants.FieldConstants;
-import org.firstinspires.ftc.teamcode.hardware.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.NewMotorWrist.WristState;
+import org.firstinspires.ftc.teamcode.hardware.subsystems.PushMechanism;
 import org.firstinspires.ftc.teamcode.hardware.subsystems.Slide;
 import org.firstinspires.ftc.teamcode.opmode.autonomous.AutoInstructions;
 import org.firstinspires.ftc.teamcode.utilities.AutonomousEx;
 
-@AutonomousEx(preload = 1, cycles = 0)
+import java.lang.Math;
+
+@AutonomousEx(preload = 1, cycles = 3)
 public class RedLeftAuto extends AutoInstructions {
 
     // Instantiate subsystems
-    public static Pose2d startPose = new Pose2d(new Vector2d(-38, -64), Math.toRadians(180));
-
-//    SequentialAction depositSample = new SequentialAction(
-//            driveTrain.strafeTo(-57, -56),  // Deposit Sample
-//            driveTrain.turnTo(225),
-//            slides.moveTo(Slide.SlideState.HIGH_BUCKET.position),
-//            driveTrain.strafeTo(-59, -59),
-//            claw.moveTo(Claw.ClawState.OPEN),
-//            new SleepAction(1)
-//    );
+    public static Pose2d startPose = new Pose2d(new Vector2d(9, -64), Math.toRadians(90));
+    TranslationalVelConstraint highSpeed = new TranslationalVelConstraint(70);
+    ProfileAccelConstraint highAcc = new ProfileAccelConstraint(-30, 70);
 
     public RedLeftAuto(LinearOpMode opMode) {
         super(opMode, startPose);
@@ -40,89 +38,122 @@ public class RedLeftAuto extends AutoInstructions {
         driveTrain.mecanumDrive.pose = startPose;
         opMode.telemetry.addLine("Ready");
         opMode.telemetry.update();
-
-        intake.claw.setPosition(Claw.ClawState.CLOSED.position);
         driveTrain.savePose(startPose);
     }
 
     @Override
     public void execute() {
-
-        Actions.runBlocking(
-                new SequentialAction(
+        driveTrain.mecanumDrive.pose = startPose;
+        Actions.runBlocking(new SequentialAction(
+                        // Hang Preloaded Specimen
                         new ParallelAction(
-                                driveTrain.strafeTo(-51, -55, 225),
-                                slides.moveTo(Slide.SlideState.HIGH_BUCKET.position),
-                                wrist.moveTo(WristState.INACTIVE.position)
+                                wrist.moveTo(WristState.HOME.position - 50),
+                                slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-400),
+                                driveTrain.strafeTo(3, -37)
                         ),
-                        wrist.moveTo(WristState.INACTIVE.position - 100),
-                        intake.moveTo(Claw.ClawState.OPEN),
-                        new SleepAction(0.5),
-                        wrist.moveTo(WristState.INACTIVE.position),
+                        driveTrain.strafeTo(3, -32),
 
                         new ParallelAction(
-                                strafeToLinearHeading(-46, -42, 90),
-                                slides.moveTo(300)
+                                slides.moveTo(4500),
+                                new SequentialAction(
+                                        new SleepAction(0.15),
+                                        driveTrain.strafeTo(3, -45)
+                                )
                         ),
-                        wrist.moveTo(WristState.ACTIVE.position),
-                        intake.moveTo(Claw.ClawState.CLOSED),
-                        new SleepAction(0.5),
+
+                        // Push 2 Samples into Observation Station
+                        driveTrain.strafeTo(34, -33, 75),
+                        pusher.moveTo(PushMechanism.PushState.ACTIVE),
+                        new SleepAction(0.05),
+                        driveTrain.strafeTo(44, -53, 0),
 
                         new ParallelAction(
-                                driveTrain.strafeTo(-51, -55, 225),
-                                slides.moveTo(Slide.SlideState.HIGH_BUCKET.position),
-                                wrist.moveTo(WristState.INACTIVE.position)
+                                slides.moveTo(Slide.SlideState.CLIPPER.position),
+                                new SequentialAction(
+                                        //Push Second Sample
+                                        pusher.moveTo(PushMechanism.PushState.INACTIVE),
+                                        // Push Forawrd
+                                        driveTrain.strafeTo(44, -26, 75),
+                                        pusher.moveTo(PushMechanism.PushState.ACTIVE),
+                                        new SleepAction(0.05),
+
+                                        driveTrain.strafeTo(54, -63, 0),
+                                        pusher.moveTo(PushMechanism.PushState.INACTIVE),
+
+                                        // Retrieve Specimen from Observation Station
+                                        driveTrain.splineToHeading(60, -59, Math.toRadians(0), Math.toRadians(0)),
+                                        driveTrain.splineTo(64, -59, Math.toRadians(0))
+                                )
                         ),
-                        wrist.moveTo(WristState.INACTIVE.position - 100),
-                        intake.moveTo(Claw.ClawState.OPEN),
-                        new SleepAction(0.5),
-                        wrist.moveTo(WristState.INACTIVE.position)
 
 
+                        // Deposit Specimen on High Chamber
+                        new ParallelAction(
+                                slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-200),
+                                driveTrain.strafeToSplineHeading(5, -34, 90)
 
-//                        new ParallelAction(
-//                                driveTrain.strafeTo(-52, -56, 225),
-//                                slides.moveTo(Slide.SlideState.HIGH_BUCKET.position),
-//                                wrist.moveTo(WristState.INACTIVE.position)
-//                        ),
-//                        intake.moveTo(Claw.ClawState.OPEN)
-                )
-
-
-
-
-//                driveTrain.mecanumDrive.actionBuilder(startPose)
-//                        .strafeToLinearHeading(new Vector2d(-52, -56), Math.toRadians(225))
-//                        .waitSeconds(4)
+                        ),
+                        slides.moveTo(5500),
+//                new ParallelAction(
 //
-//                        .strafeToLinearHeading(new Vector2d(-47, -40), Math.toRadians(90))
-//                        .waitSeconds(1)
-//                        .strafeToLinearHeading(new Vector2d(-52, -56), Math.toRadians(225))
-//                        .waitSeconds(4)
+//                        new SequentialAction(
+//                                new SleepAction(0.15),
+//                                driveTrain.strafeTo(10, -48, new TranslationalVelConstraint(70), new ProfileAccelConstraint(-30, 70))
+//                        )
+//                ),
+
+
+                        // Retrieve Specimen from Observation Station
+                        new ParallelAction(
+                                slides.moveTo(Slide.SlideState.CLIPPER.position),
+                                new SequentialAction(
+                                        driveTrain.strafeToSplineHeading(40, -66, 271)
+                                )
+                        ),
+
+                        // Deposit Specimen on High Chamber
+                        new ParallelAction(
+                                driveTrain.strafeToSplineHeading(6, -34, 90),
+                                slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-200)
+                        ),
+                        slides.moveTo(5500),
+//                new ParallelAction(
 //
-//                        .strafeToLinearHeading(new Vector2d(-58, -40), Math.toRadians(90))
-//                        .waitSeconds(1)
-//                        .strafeToLinearHeading(new Vector2d(-52, -56), Math.toRadians(225))
-//                        .waitSeconds(4)
-//
-//                        .strafeToLinearHeading(new Vector2d(-53, -25), Math.toRadians(180))
-//                        .waitSeconds(1)
-//                        .strafeToLinearHeading(new Vector2d(-52, -56), Math.toRadians(225))
-//                        .waitSeconds(4)
-//                        .strafeTo(new Vector2d(-52, -56))
-//                        .build()
+//                        new SequentialAction(
+//                                new SleepAction(0.15),
+//                                driveTrain.strafeTo(10, -48, new TranslationalVelConstraint(70), new ProfileAccelConstraint(-30, 70))
+//                        )
+//                ),
+
+                        // Retrieve Specimen from Observation Station
+                        new ParallelAction(
+                                slides.moveTo(Slide.SlideState.CLIPPER.position),
+                                driveTrain.strafeToSplineHeading(40, -66, 271)
+                        ),
+
+                        // Deposit Specimen on High Chamber
+                        new ParallelAction(
+                                //driveTrain.strafeToSplineHeading(5, -33, 90), // keep old?
+                                slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-200),
+                                driveTrain.strafeToSplineHeading(6.5, -34, 90)
+                        ),
+                        new ParallelAction(
+                                slides.moveTo(Slide.SlideState.HOME.position),
+                                new SequentialAction(
+                                        new SleepAction(0.50),
+                                        new ParallelAction(
+                                                driveTrain.strafeTo(64, -64, 225, new TranslationalVelConstraint(100), new ProfileAccelConstraint(-30, 100))
+                                        )
+
+                                )
+                        ))
+
+
         );
     }
 
     @Override
     public void stop() {
 
-    }
-
-    private Action strafeToLinearHeading(int x, int y, int heading){
-        driveTrain.savePose(new Pose2d(new Vector2d(x, y), Math.toRadians(heading)));
-        return driveTrain.mecanumDrive.actionBuilder(driveTrain.getLastSavedPose())
-                .strafeToLinearHeading(new Vector2d(x, y), Math.toRadians(heading))
-                .build();
     }
 }

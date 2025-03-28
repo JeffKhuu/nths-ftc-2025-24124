@@ -51,10 +51,10 @@ public class RedRightAuto extends AutoInstructions {
                                 slides.moveTo(Slide.SlideState.CLIP_HIGH_CHAMBER.position-400),
                                 driveTrain.strafeTo(3, -37)
                         ),
-                        driveTrain.strafeTo(3, -33),
+                        driveTrain.strafeTo(3, -32),
 
                         new ParallelAction(
-                                slides.moveTo(5000),
+                                slides.moveTo(4500),
                                 new SequentialAction(
                                         new SleepAction(0.15),
                                         driveTrain.strafeTo(3, -45)
@@ -140,7 +140,7 @@ public class RedRightAuto extends AutoInstructions {
                         new ParallelAction(
                                 slides.moveTo(Slide.SlideState.HOME.position),
                                 new SequentialAction(
-                                        new SleepAction(0.20),
+                                        new SleepAction(0.50),
                                         driveTrain.strafeTo(10, -48, new TranslationalVelConstraint(70), new ProfileAccelConstraint(-30, 70))
                                 )
                         ))
